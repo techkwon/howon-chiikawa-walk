@@ -86,6 +86,38 @@ test('additional actor circles and rectangles are added without mutating them', 
   close(safeMove({ x: 31, z: 20 }, { x: 1, z: 0 }, 0.05, 1000, [box]).x, 32.8);
 });
 
+test('running speed increases travel without amplifying diagonal or analog input', () => {
+  const start = { x: 31, z: 20 };
+  const walk = safeMove(start, { x: 1, z: 0 }, 0.05, 6);
+  const run = safeMove(start, { x: 1, z: 1 }, 0.05, 12);
+  const analogRun = safeMove(start, { x: 0.5, z: 0 }, 0.05, 12);
+  close(Math.hypot(run.x - start.x, run.z - start.z), 2 * (walk.x - start.x));
+  close(analogRun.x, walk.x);
+  safePosition(run);
+});
+
+test('running and extreme-speed sweeps stop before thin walls and diagonal actor collisions', () => {
+  const wall = { x1: 34, x2: 34.01, z1: 16, z2: 24 };
+  const actor = { x: 35, z: 16, radius: CHARACTER_RADIUS };
+  for (const speed of [12, 24, 1000, 100000]) {
+    let p = { x: 31, z: 20 };
+    for (let frame = 0; frame < 30; frame++) {
+      p = safeMove(p, { x: 1, z: 0 }, 0.05, speed, [wall]);
+      assert.ok(p.x <= wall.x1 - CHARACTER_RADIUS);
+      safePosition(p);
+    }
+    close(p.x, wall.x1 - CHARACTER_RADIUS);
+    p = { x: 31, z: 20 };
+    for (let frame = 0; frame < 30; frame++) {
+      p = safeMove(p, { x: 1, z: -1 }, 0.05, speed, [actor]);
+      assert.ok(Math.hypot(p.x - actor.x, p.z - actor.z) >= 2 * CHARACTER_RADIUS - 1e-5);
+      safePosition(p);
+    }
+    close(p.x, actor.x - 2 * CHARACTER_RADIUS / Math.SQRT2);
+    close(p.z, actor.z + 2 * CHARACTER_RADIUS / Math.SQRT2);
+  }
+});
+
 test('wall contact still permits retreat and repeated diagonal movement stays outside geometry', () => {
   let p = { x: -2.8, z: -26 };
   assert.ok(safeMove(p, { x: 1, z: 0 }, 0.05, 6).x > p.x);
@@ -148,6 +180,146 @@ test('keyboard supports WASD/arrows, opposite keys and normalized diagonals', ()
   fire(win, 'keyup', { code: 'ArrowUp' });
   fire(win, 'keydown', { code: 'KeyA' });
   assert.deepEqual(controller.getVector(), { x: 0, z: 0 });
+  controller.destroy();
+});
+
+test('held Shift supports either side, simultaneous Shift keys and key repeat', () => {
+  const { win, controller, fire } = inputFixture();
+  assert.equal(controller.isRunning(), false);
+  assert.equal(fire(win, 'keydown', { code: 'ShiftLeft' }).defaultPrevented, false);
+  assert.equal(controller.isRunning(), true);
+  assert.deepEqual(controller.getVector(), { x: 0, z: 0 });
+  fire(win, 'keydown', { code: 'ShiftLeft', repeat: true });
+  fire(win, 'keydown', { code: 'KeyW', shiftKey: true });
+  assert.deepEqual(controller.getVector(), { x: 0, z: -1 });
+  fire(win, 'keydown', { code: 'ShiftRight' });
+  fire(win, 'keyup', { code: 'ShiftLeft' });
+  assert.equal(controller.isRunning(), true);
+  fire(win, 'keyup', { code: 'ShiftRight' });
+  assert.equal(controller.isRunning(), false);
+  assert.deepEqual(controller.getVector(), { x: 0, z: -1 });
+  fire(win, 'keydown', { key: 'Shift', location: 2 });
+  assert.equal(controller.isRunning(), true);
+  fire(win, 'keyup', { key: 'Shift', location: 2 });
+  assert.equal(controller.isRunning(), false);
+  controller.destroy();
+});
+
+test('run toggle is independent from held Shift and does not interrupt a joystick drag', () => {
+  const { win, element, controller, fire } = inputFixture();
+  fire(element, 'pointerdown', { pointerId: 2, clientX: 94, clientY: 70, button: 0 });
+  assert.equal(controller.toggleRunning(true), true);
+  assert.equal(controller.isRunning(), true);
+  assert.deepEqual(controller.getVector(), { x: 1, z: 0 });
+  assert.equal(element.hasPointerCapture(2), true);
+  fire(win, 'keydown', { code: 'ShiftLeft' });
+  controller.toggleRunning(false);
+  assert.equal(controller.isRunning(), true);
+  fire(win, 'keyup', { code: 'ShiftLeft' });
+  assert.equal(controller.isRunning(), false);
+  controller.toggleRunning();
+  assert.equal(controller.isRunning(), true);
+  fire(win, 'pointerup', { pointerId: 2 });
+  fire(element, 'lostpointercapture', { pointerId: 2 });
+  assert.equal(controller.isRunning(), true);
+  assert.deepEqual(controller.getVector(), { x: 0, z: 0 });
+  controller.toggleRunning();
+  assert.equal(controller.isRunning(), false);
+  controller.destroy();
+});
+
+test('pointer cancellation without an active joystick clears a pending run toggle', () => {
+  const { win, controller, fire } = inputFixture();
+  controller.toggleRunning(true);
+  fire(win, 'keydown', { code: 'ShiftLeft' });
+  fire(win, 'keydown', { code: 'KeyW' });
+  fire(win, 'pointercancel', { pointerId: 9 });
+  assert.equal(controller.isRunning(), false);
+  assert.deepEqual(controller.getVector(), { x: 0, z: 0 });
+  controller.destroy();
+});
+
+test('public reset clears run intent, keyboard input and pointer capture together', () => {
+  const { win, element, knob, controller, fire } = inputFixture();
+  fire(win, 'keydown', { code: 'KeyW' });
+  fire(win, 'keydown', { code: 'ShiftLeft' });
+  controller.toggleRunning(true);
+  fire(element, 'pointerdown', { pointerId: 2, clientX: 94, clientY: 70, button: 0 });
+  controller.reset();
+  assert.equal(controller.isRunning(), false);
+  assert.deepEqual(controller.getVector(), { x: 0, z: 0 });
+  assert.equal(element.hasPointerCapture(2), false);
+  assert.equal(knob.style.transform, 'translate(0px, 0px)');
+  fire(win, 'keyup', { code: 'ShiftLeft' });
+  assert.equal(controller.isRunning(), false);
+  controller.destroy();
+  controller.reset();
+  assert.equal(controller.toggleRunning(true), false);
+  assert.equal(controller.isRunning(), false);
+  assert.equal(knob.style.transform, '');
+});
+
+test('run state resets on blur, hidden document, modal, focus change and active pointer cancel', () => {
+  for (const interruption of ['blur', 'hidden', 'modal', 'focus', 'pointercancel', 'lostpointercapture']) {
+    const { win, doc, element, controller, fire } = inputFixture();
+    fire(win, 'keydown', { code: 'KeyW' });
+    fire(win, 'keydown', { code: 'ShiftLeft' });
+    controller.toggleRunning(true);
+    fire(element, 'pointerdown', { pointerId: 2, clientX: 94, clientY: 70, button: 0 });
+    if (interruption === 'blur') fire(win, 'blur');
+    if (interruption === 'hidden') { doc.hidden = true; fire(doc, 'visibilitychange'); }
+    if (interruption === 'modal') doc.modal = {};
+    if (interruption === 'focus') { doc.activeElement = { tagName: 'TEXTAREA' }; fire(doc, 'focusin'); }
+    if (interruption === 'pointercancel') fire(win, 'pointercancel', { pointerId: 2 });
+    if (interruption === 'lostpointercapture') fire(element, 'lostpointercapture', { pointerId: 2 });
+    assert.equal(controller.isRunning(), false, interruption);
+    assert.deepEqual(controller.getVector(), { x: 0, z: 0 }, interruption);
+    assert.equal(element.hasPointerCapture(2), false, interruption);
+    doc.hidden = false; doc.modal = null; doc.activeElement = null;
+    assert.equal(controller.isRunning(), false, `${interruption} does not resume stale run state`);
+    controller.destroy();
+  }
+});
+
+test('typing, dialogs and shortcuts do not activate Shift or toggle running', () => {
+  const { win, doc, controller, fire } = inputFixture();
+  for (const target of [{ tagName: 'INPUT' }, { isContentEditable: true }]) {
+    doc.activeElement = target;
+    fire(win, 'keydown', { code: 'ShiftLeft' });
+    assert.equal(controller.toggleRunning(true), false);
+    assert.equal(controller.isRunning(), false);
+  }
+  doc.activeElement = null; doc.modal = {};
+  fire(win, 'keydown', { code: 'ShiftRight' });
+  assert.equal(controller.toggleRunning(true), false);
+  doc.modal = null;
+  for (const modifier of ['ctrlKey', 'metaKey', 'altKey']) {
+    fire(win, 'keydown', { code: 'ShiftLeft', [modifier]: true });
+    assert.equal(controller.isRunning(), false);
+  }
+  controller.destroy();
+});
+
+test('non-primary touch can own joystick while another finger operates run toggle', () => {
+  const { win, element, controller, fire } = inputFixture();
+  // Finger 1 is on the run control; finger 2 reaches the joystick afterwards.
+  controller.toggleRunning(true);
+  fire(element, 'pointerdown', { pointerId: 2, pointerType: 'touch', isPrimary: false, clientX: 94, clientY: 70, button: 0 });
+  assert.deepEqual(controller.getVector(), { x: 1, z: 0 });
+  assert.equal(controller.isRunning(), true);
+  fire(element, 'pointerdown', { pointerId: 3, pointerType: 'touch', isPrimary: false, clientX: 26, clientY: 70, button: 0 });
+  fire(win, 'pointermove', { pointerId: 3, clientX: 26, clientY: 70 });
+  fire(win, 'pointercancel', { pointerId: 3 });
+  fire(win, 'pointerup', { pointerId: 1 });
+  assert.deepEqual(controller.getVector(), { x: 1, z: 0 });
+  assert.equal(controller.isRunning(), true);
+  controller.toggleRunning(false);
+  assert.deepEqual(controller.getVector(), { x: 1, z: 0 });
+  fire(win, 'pointermove', { pointerId: 2, clientX: 60, clientY: 36 });
+  assert.deepEqual(controller.getVector(), { x: 0, z: -1 });
+  fire(win, 'pointercancel', { pointerId: 2 });
+  assert.deepEqual(controller.getVector(), { x: 0, z: 0 });
+  assert.equal(controller.isRunning(), false);
   controller.destroy();
 });
 

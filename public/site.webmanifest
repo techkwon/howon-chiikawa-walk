@@ -1,0 +1,21 @@
+{
+  "id": "/howon-chiikawa-walk/",
+  "name": "작은 친구들의 호원 산책",
+  "short_name": "호원 산책",
+  "description": "호원중학교 3D 모델과 함께하는 비공식 팬 산책 체험. 학교나 원작의 공식 서비스가 아닙니다.",
+  "lang": "ko-KR",
+  "dir": "ltr",
+  "start_url": "/howon-chiikawa-walk/",
+  "scope": "/howon-chiikawa-walk/",
+  "display": "browser",
+  "theme_color": "#f7f6ef",
+  "background_color": "#f7f6ef",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

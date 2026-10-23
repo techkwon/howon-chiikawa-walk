@@ -1,0 +1,5 @@
+# GitHub Pages project file. Crawlers apply robots.txt only at the origin root.
+# Page-level indexing directives are also provided in the HTML head.
+User-agent: *
+Allow: /howon-chiikawa-walk/
+Sitemap: https://techkwon.github.io/howon-chiikawa-walk/sitemap.xml

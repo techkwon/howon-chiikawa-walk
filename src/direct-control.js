@@ -181,19 +181,30 @@ const KEY_VECTORS = {
   KeyA: [-1, 0], ArrowLeft: [-1, 0], KeyD: [1, 0], ArrowRight: [1, 0],
 };
 const KEY_CODES = { w: 'KeyW', a: 'KeyA', s: 'KeyS', d: 'KeyD' };
-function inputCode(event) { return KEY_VECTORS[event.code] ? event.code : KEY_CODES[event.key?.toLowerCase()] || event.key; }
+const SHIFT_CODES = new Set(['ShiftLeft', 'ShiftRight']);
+function inputCode(event) {
+  if (KEY_VECTORS[event.code] || SHIFT_CODES.has(event.code)) return event.code;
+  if (event.key === 'Shift') return event.location === 2 ? 'ShiftRight' : 'ShiftLeft';
+  return KEY_CODES[event.key?.toLowerCase()] || event.key;
+}
 function editable(target) {
   return Boolean(target && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName || '') || target.closest?.('[contenteditable]:not([contenteditable="false"]), dialog, [role="dialog"]')));
 }
 
-/** Keyboard and pointer joystick input. The joystick knob should be CSS-centered. */
+/**
+ * Keyboard and pointer joystick input. The joystick knob should be CSS-centered.
+ * isRunning() is the run intent (held Shift OR the mobile toggle), independent of
+ * movement. toggleRunning(bool) changes only the toggle, retaining a joystick
+ * drag; omit its argument to invert it. reset() clears every active input.
+ */
 export function createInputController({ element } = {}) {
   const doc = element?.ownerDocument || globalThis.document;
   const win = doc?.defaultView || globalThis.window;
   const knob = element?.querySelector?.('#joystick-knob');
   const keys = new Set();
+  const heldShifts = new Set();
   const listeners = [];
-  let pointerId = null, joystick = { x: 0, z: 0 }, destroyed = false;
+  let pointerId = null, joystick = { x: 0, z: 0 }, runningToggle = false, destroyed = false;
   const originalTouchAction = element?.style.touchAction;
   const originalTransform = knob?.style.transform;
   const originallyActive = element?.classList.contains('active');
@@ -201,7 +212,7 @@ export function createInputController({ element } = {}) {
     target?.addEventListener(type, handler, options);
     listeners.push(() => target?.removeEventListener(type, handler, options));
   };
-  const blocked = target => editable(target) || editable(doc?.activeElement) || Boolean(doc?.querySelector?.('dialog[open]'));
+  const blocked = target => Boolean(doc?.hidden) || editable(target) || editable(doc?.activeElement) || Boolean(doc?.querySelector?.('dialog[open]'));
   const release = () => {
     const oldPointer = pointerId;
     pointerId = null;
@@ -212,7 +223,12 @@ export function createInputController({ element } = {}) {
       try { if (element?.hasPointerCapture?.(oldPointer)) element.releasePointerCapture(oldPointer); } catch { /* Capture may already be released by the browser. */ }
     }
   };
-  const reset = () => { keys.clear(); release(); };
+  const reset = () => { keys.clear(); heldShifts.clear(); runningToggle = false; release(); };
+  const isRunning = () => {
+    if (destroyed) return false;
+    if (blocked()) { reset(); return false; }
+    return runningToggle || heldShifts.size > 0;
+  };
   const movePointer = event => {
     const rect = element.getBoundingClientRect();
     const knobRect = knob?.getBoundingClientRect?.();
@@ -231,20 +247,27 @@ export function createInputController({ element } = {}) {
   if (element) element.style.touchAction = 'none';
   listen(win, 'keydown', event => {
     const code = inputCode(event);
-    if (!KEY_VECTORS[code] || event.ctrlKey || event.metaKey || event.altKey) return;
+    const shift = SHIFT_CODES.has(code);
+    if ((!KEY_VECTORS[code] && !shift) || event.ctrlKey || event.metaKey || event.altKey) return;
     if (blocked(event.target)) { reset(); return; }
+    // Do not cancel Shift itself: Shift+Tab and ordinary browser focus behavior
+    // must keep working. Only movement keys consume their default action.
+    if (shift) { heldShifts.add(code); return; }
     event.preventDefault();
     keys.add(code);
   });
   listen(win, 'keyup', event => {
     const code = inputCode(event);
+    if (SHIFT_CODES.has(code)) { heldShifts.delete(code); return; }
     if (keys.delete(code) && !blocked(event.target)) event.preventDefault();
   });
   listen(win, 'blur', reset);
   listen(doc, 'visibilitychange', () => { if (doc.hidden) reset(); });
   listen(doc, 'focusin', event => { if (blocked(event.target)) reset(); });
   listen(element, 'pointerdown', event => {
-    if (pointerId !== null || event.isPrimary === false || (event.button !== undefined && event.button !== 0) || blocked(event.target)) return;
+    // A touch on the run button can be the primary pointer. The first pointer
+    // that actually reaches this joystick owns it, even if it is non-primary.
+    if (pointerId !== null || (event.button !== undefined && event.button !== 0) || blocked(event.target)) return;
     event.preventDefault();
     event.stopPropagation();
     pointerId = event.pointerId;
@@ -259,11 +282,21 @@ export function createInputController({ element } = {}) {
     movePointer(event);
   }, { passive: false });
   const endPointer = event => { if (pointerId !== null && event.pointerId === pointerId) release(); };
+  const cancelPointer = event => { if (pointerId === null || event.pointerId === pointerId) reset(); };
+  const losePointer = event => { if (pointerId !== null && event.pointerId === pointerId) reset(); };
   listen(win, 'pointerup', endPointer);
-  listen(win, 'pointercancel', endPointer);
-  listen(element, 'lostpointercapture', endPointer);
+  listen(win, 'pointercancel', cancelPointer);
+  listen(element, 'lostpointercapture', losePointer);
 
   return {
+    isRunning,
+    toggleRunning(enabled = !runningToggle) {
+      if (destroyed) return false;
+      if (blocked()) { reset(); return false; }
+      runningToggle = Boolean(enabled);
+      return isRunning();
+    },
+    reset() { if (!destroyed) reset(); },
     getVector() {
       if (destroyed) return { x: 0, z: 0 };
       if (blocked()) { reset(); return { x: 0, z: 0 }; }
