@@ -15,6 +15,7 @@ const viewports = [
   [568, 320], [844, 390], [720, 720], [882, 1104], [1024, 600],
 ];
 function mediaMatches(query, { width, height, root }) {
+  if (query.includes(',')) return query.split(',').some(part => mediaMatches(part.trim(), { width, height, root }));
   if (/prefers-|forced-colors|hover:/.test(query)) return false;
   if (/orientation:\s*portrait/.test(query) && width > height) return false;
   if (/orientation:\s*landscape/.test(query) && width <= height) return false;
@@ -112,19 +113,25 @@ test('44 CSS-pixel target floor survives fluid sizing and a 200% user font setti
   assert.match(fluid, /\.toolbar button, \.toolbar \.primary, \.toolbar #reset\s*\{[^}]*min-width:\s*44px/);
 });
 
-test('phone toolbar retains all six core controls and enough track width at 100% and 200% text', () => {
+test('phone toolbar retains all six controls with 44px targets in compact and enlarged-text reflow layouts', () => {
   const nav = html.match(/<nav class="toolbar[\s\S]*?<\/nav>/)?.[0] || '';
   const ids = [...nav.matchAll(/<button id="([^"]+)"/g)].map(match => match[1]);
   assert.deepEqual(ids, ['play', 'follow', 'overview', 'gallery-toggle', 'photo', 'reset']);
   for (const width of [320, 360, 390, 430, 480]) {
     for (const root of [16, 32]) {
       const ctx = context(width, 844, root);
-      const available = token('--ui-available-width', ctx);
-      const track = (available - .375 * root * 2 - 2 - .25 * root * 2) / 3;
-      assert.ok(track >= 44, `${width}px / ${root}px root: track ${track}`);
-      assert.ok(token('--toolbar-height', ctx) >= token('--ui-control-size', ctx) * 2);
+      const reflow = mediaMatches('(max-width: 24rem) and (max-height: 32rem) and (orientation: portrait)', ctx);
+      const columns = reflow ? 3 : 6;
+      const available = token('--mobile-available', ctx);
+      const padding = .25 * root * 2, border = 2, gap = .125 * root;
+      const track = (available - padding - border - (columns - 1) * gap) / columns;
+      assert.ok(track >= 44, `${width}px / ${root}px root: ${columns}-column track ${track}`);
+      if (!reflow) assert.ok(token('--toolbar-height', ctx) >= token('--ui-control-size', ctx));
     }
   }
+  const mobile = css.slice(css.indexOf('--mobile-edge:'));
+  assert.match(mobile, /grid-template-columns:\s*repeat\(6, minmax\(44px, 1fr\)\)/);
+  assert.match(mobile, /grid-auto-rows:\s*minmax\(var\(--ui-control-size\), max-content\)/);
 });
 
 test('user font enlargement grows labels rather than hitting a pixel cap', () => {

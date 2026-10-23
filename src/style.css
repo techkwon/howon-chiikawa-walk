@@ -860,3 +860,229 @@ body[data-gallery="true"] #travel-help { display: none !important; }
 .stage-board{display:flex;flex-wrap:wrap;gap:.45rem}.stage-tile{padding:.5rem .7rem;border:1px solid #adc4b5;border-radius:.6rem;background:#edf5ed;color:#264336;overflow-wrap:anywhere}.stage-tile.matched,.stage-tile.done{border-width:2px;background:#dceedd}
 
 #stop-quiz-dialog[data-game-type="order"] .stage-board{counter-reset:step}#stop-quiz-dialog[data-game-type="order"] .stage-tile::before{counter-increment:step;content:counter(step) " · ";font-weight:800}#stop-quiz-dialog[data-game-type="collect"] .stage-tile{border-radius:1.2rem 1.2rem .5rem .5rem}#stop-quiz-dialog[data-game-type="match"] .stage-options button{border-style:dashed}#stop-quiz-dialog[data-game-type="path"] .stage-board{border-left:3px solid #8bab98;padding-left:.6rem}
+
+.stage-close-top {
+  position: sticky; top: 0; float: right; z-index: 5;
+  min-width: 44px; min-height: var(--ui-control-size); padding: .5rem;
+  border: 1px solid #b8cbb5; border-radius: .625rem; background: #fffdf5;
+  color: #344635; font-size: var(--ui-font-body); line-height: 1.4;
+}
+.stage-close-top:focus-visible { outline-offset: -3px; }
+
+/* MOBILE REVIEW: one compact status row, one action dock, and focused reading sheets.
+   CSS pixels describe targets; none of these values changes WebGL pixel ratio. */
+@media (max-width: 900px), (max-width: 1100px) and (pointer: coarse) {
+  :root {
+    --mobile-edge: clamp(.625rem, 2.5vw, 1rem);
+    --mobile-available: calc(100vw - var(--mobile-edge) * 2 - var(--safe-left) - var(--safe-right));
+    --mobile-header-height: max(44px, 2.75rem);
+    --mobile-status-top: calc(var(--safe-top) + .5rem + var(--mobile-header-height) + .375rem);
+    --mobile-status-height: max(44px, 2.75rem);
+    --mobile-content-top: calc(var(--mobile-status-top) + var(--mobile-status-height) + .5rem);
+    --mobile-settings-width: clamp(6rem, 24vw, 8rem);
+    --mobile-footer-height: max(24px, 1.5rem);
+    --mobile-dock-height: max(72px, 4.5rem);
+    --mobile-dock-bottom: calc(var(--safe-bottom) + var(--mobile-footer-height) + .25rem);
+    --mobile-walk-bottom: calc(var(--mobile-dock-bottom) + var(--mobile-dock-height) + .5rem);
+    --mobile-joystick-size: max(80px, 5rem);
+  }
+  #app {
+    --toolbar-height: var(--mobile-dock-height);
+    --toolbar-bottom: var(--mobile-dock-bottom);
+    --walking-bottom: var(--mobile-walk-bottom);
+    --ui-footer-space: var(--mobile-footer-height);
+    display: block;
+    padding: 0;
+    overflow: clip;
+    height: 100vh;
+    height: 100dvh;
+  }
+  .panel { background: #fffdf5f5; backdrop-filter: none; }
+  .topbar {
+    position: absolute; inset: auto;
+    top: calc(.5rem + var(--safe-top)); left: calc(var(--mobile-edge) + var(--safe-left)); right: calc(var(--mobile-edge) + var(--safe-right));
+    min-height: var(--mobile-header-height); gap: .5rem; margin: 0; width: auto;
+  }
+  .brand { flex: 1 1 0; min-width: 0; min-height: var(--mobile-header-height); gap: .375rem; }
+  .brand strong { font-size: var(--ui-font-label); line-height: 1.4; }
+  .brand small, .live, .intro, .view-label { display: none; }
+  .brand-icon { width: 2rem; height: 2rem; font-size: 1.5rem; }
+  .top-actions { gap: .25rem; }
+  #hud-toggle, .circle { min-width: 44px; min-height: var(--mobile-header-height); font-size: var(--ui-font-label); padding: .375rem; }
+  #tour-progress, #experience-settings {
+    position: absolute; top: var(--mobile-status-top); bottom: auto; padding: 0; margin: 0;
+    min-height: var(--mobile-status-height); max-height: none; border-radius: .75rem; overflow: hidden;
+  }
+  body[data-compact="true"] #tour-progress, body[data-compact="true"] #experience-settings,
+  body[data-gallery="true"] #experience-settings { top: var(--mobile-status-top); }
+  #tour-progress { left: calc(var(--mobile-edge) + var(--safe-left)); right: calc(var(--mobile-edge) + var(--safe-right) + var(--mobile-settings-width) + .375rem); width: auto; }
+  #experience-settings { left: auto; right: calc(var(--mobile-edge) + var(--safe-right)); width: var(--mobile-settings-width); }
+  #tour-progress summary, #experience-settings summary {
+    min-height: var(--mobile-status-height); padding: .375rem; display: flex; align-items: center; justify-content: space-between; gap: .25rem;
+    font-size: var(--ui-font-label); line-height: 1.4; border-radius: .75rem;
+  }
+  #tour-count { display: inline; flex-shrink: 0; margin: 0; font-size: var(--ui-font-body); line-height: 1.2; }
+  #tour-progress summary::after, #experience-settings summary::after { content: '⌄'; flex-shrink: 0; margin: 0; font-size: 1rem; }
+  #tour-progress:not([open]) .coin-counter { display: none; }
+  #tour-progress[open] summary::after, #experience-settings[open] summary::after { content: '⌃'; }
+  #tour-progress[open] {
+    z-index: 31; right: calc(var(--mobile-edge) + var(--safe-right));
+    max-height: calc(100dvh - var(--mobile-status-top) - var(--mobile-dock-bottom) - var(--mobile-dock-height) - .5rem);
+    overflow-y: auto; padding: .5rem;
+  }
+  #tour-progress[open] summary { flex-wrap: wrap; border-bottom: 1px solid var(--border); }
+  #tour-progress[open] summary .coin-counter { display: block; flex-basis: 100%; margin: 0; padding: .375rem 0; border: 0; font-size: var(--ui-font-body); }
+  #tour-checklist button, #tour-restart { font-size: var(--ui-font-body); padding: .625rem .375rem; }
+  #experience-settings[open], body[data-gallery="true"] #experience-settings[open] {
+    position: fixed; z-index: 32; top: var(--mobile-status-top); bottom: auto;
+    left: calc(var(--mobile-edge) + var(--safe-left)); right: calc(var(--mobile-edge) + var(--safe-right)); width: auto; max-width: none;
+    max-height: calc(100dvh - var(--mobile-status-top) - var(--mobile-dock-bottom) - var(--mobile-dock-height) - .5rem);
+    overflow-y: auto; margin: 0; padding: .75rem; scroll-padding-block: 4rem 1rem;
+  }
+  #experience-settings[open] summary { position: sticky; top: -.75rem; z-index: 2; background: #fffdf5; padding-block: .5rem; border-bottom: 1px solid var(--border); }
+  #experience-settings #credits { font-size: var(--ui-font-label); line-height: 1.7; }
+  .places { display: grid; position: absolute; top: var(--mobile-content-top); left: calc(var(--mobile-edge) + var(--safe-left)); right: calc(var(--mobile-edge) + var(--safe-right)); width: auto; padding: .375rem; grid-template-columns: repeat(4, minmax(44px, 1fr)); gap: .25rem; }
+  .places .section-label { display: none; }
+  .place { display: flex; align-items: center; justify-content: center; min-height: max(52px, 3.25rem); padding: .375rem .125rem; flex-direction: column; }
+  .companions { position: absolute; top: calc(var(--mobile-content-top) + 4.5rem); bottom: auto; left: calc(var(--mobile-edge) + var(--safe-left)); right: calc(var(--mobile-edge) + var(--safe-right)); transform: none; width: auto; max-width: none; max-height: 24dvh; padding: .25rem; }
+  .companions .section-label, #friend-status, .friend small, .friend i { display: none; }
+  .friend-buttons { flex-direction: row; gap: .25rem; }
+  .friend { justify-content: center; min-width: 44px; padding: .375rem; }
+  .toolbar {
+    position: absolute; inset: auto; left: calc(var(--mobile-edge) + var(--safe-left)); right: calc(var(--mobile-edge) + var(--safe-right));
+    bottom: var(--mobile-dock-bottom); width: auto; max-width: none; height: var(--mobile-dock-height); max-height: 35dvh;
+    transform: none; margin: 0; padding: .25rem; display: grid; grid-template-columns: repeat(6, minmax(44px, 1fr));
+    grid-template-rows: minmax(var(--ui-control-size), max-content); grid-auto-rows: auto; gap: .125rem; overflow: auto; border-radius: .875rem;
+  }
+  .toolbar button, .toolbar .primary, .toolbar #reset { min-width: 44px; min-height: var(--ui-control-size); height: auto; padding: .25rem .0625rem; gap: .125rem; font-size: 1rem; }
+  .toolbar button span, .toolbar button b { font-size: var(--ui-font-label); line-height: 1.35; word-break: normal; overflow-wrap: anywhere; }
+  .toolbar #play-icon { font-size: 1rem; }
+  .walk-mode, body[data-compact="true"] .walk-mode {
+    position: absolute; inset: auto; left: auto; right: calc(var(--mobile-edge) + var(--safe-right)); bottom: var(--mobile-walk-bottom);
+    width: calc(var(--mobile-available) - var(--mobile-joystick-size) - .625rem); max-width: 22rem;
+    transform: none; display: flex; flex-direction: row; flex-wrap: wrap; gap: .25rem; padding: .25rem; margin: 0;
+    max-height: 24dvh; overflow-y: auto;
+  }
+  .walk-mode button { min-width: 44px; flex: 1 1 44px; min-height: var(--ui-control-size); padding: .375rem .125rem; font-size: var(--ui-font-label); white-space: normal; }
+  #joystick { position: absolute; inset: auto; left: calc(var(--mobile-edge) + var(--safe-left)); bottom: var(--mobile-walk-bottom); width: var(--mobile-joystick-size); height: var(--mobile-joystick-size); margin: 0; }
+  #joystick-knob { width: 2.5rem; height: 2.5rem; left: calc((100% - 2.5rem) / 2); top: calc((100% - 2.5rem) / 2); }
+  .joystick-label { display: none; }
+  footer {
+    position: absolute; inset: auto; left: calc(var(--mobile-edge) + var(--safe-left)); right: calc(var(--mobile-edge) + var(--safe-right)); bottom: calc(.125rem + var(--safe-bottom));
+    width: auto; max-width: none; height: var(--mobile-footer-height); max-height: var(--mobile-footer-height); margin: 0; padding: 0; overflow-y: auto;
+  }
+  footer .compact-disclaimer { display: block; font-size: var(--ui-font-micro); line-height: 1.4; text-align: center; }
+  #story-card, body[data-compact="true"] #story-card {
+    position: fixed; z-index: 26; top: auto; bottom: calc(var(--mobile-dock-bottom) + var(--mobile-dock-height) + .5rem);
+    left: calc(var(--mobile-edge) + var(--safe-left)); right: calc(var(--mobile-edge) + var(--safe-right)); width: auto; max-width: none; margin: 0;
+    max-height: min(62dvh, calc(100dvh - var(--mobile-content-top) - var(--mobile-dock-bottom) - var(--mobile-dock-height) - .5rem));
+    padding: .875rem; border-radius: 1rem; overflow-y: auto; scroll-padding-block: 3.5rem 1rem;
+  }
+  #story-close { position: sticky; float: right; top: -.25rem; min-width: 44px; min-height: var(--ui-control-size); margin: -.375rem -.375rem .25rem .5rem; background: #fffdf5; }
+  #story-card h2 { font-size: clamp(1.25rem, 1rem + .6vw, 1.75rem); }
+  #story-summary, #story-points { font-size: var(--ui-font-reading) !important; }
+  #story-read { display: block; width: 100%; min-height: max(48px, 3rem); background: #3c654d; color: #fffdf5; font-size: var(--ui-font-body); }
+  .story-actions { gap: .5rem; }
+  #character-speech { width: min(17rem, var(--mobile-available)); max-width: var(--mobile-available); padding: .625rem .75rem; }
+  #speech-line { font-size: clamp(1rem, .9rem + .3vw, 1.25rem); }
+  #speech-narration { font-size: var(--ui-font-label); -webkit-line-clamp: 2; }
+  #speech-details { font-size: var(--ui-font-label); }
+  #travel-help {
+    position: fixed; z-index: 27; top: auto; bottom: calc(var(--mobile-walk-bottom) + var(--mobile-joystick-size) + .5rem);
+    left: calc(var(--mobile-edge) + var(--safe-left)); right: calc(var(--mobile-edge) + var(--safe-right)); width: auto; transform: none;
+    max-height: calc(100dvh - var(--mobile-content-top) - var(--mobile-walk-bottom) - var(--mobile-joystick-size) - .5rem); padding: .875rem;
+  }
+  #travel-help button { display: block; width: 100%; margin: .375rem 0; }
+  #app:has(#travel-help:not([hidden])) #experience-settings,
+  #app:has(#travel-help:not([hidden])) #tour-progress,
+  #app:has(#travel-help:not([hidden])) #character-speech { visibility: hidden !important; pointer-events: none; }
+  #gallery-controls { position: absolute; inset: auto; left: calc(var(--mobile-edge) + var(--safe-left)); right: calc(var(--mobile-edge) + var(--safe-right)); bottom: var(--mobile-dock-bottom); transform: none; width: auto; max-width: none; margin: 0; padding: .5rem; }
+  #toast { bottom: calc(var(--mobile-walk-bottom) + var(--mobile-joystick-size) + .625rem); max-width: var(--mobile-available); }
+  dialog, #stop-quiz-dialog, #farewell {
+    position: fixed; inset: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left); margin: auto; height: fit-content; width: calc(100% - var(--mobile-edge) * 2 - var(--safe-left) - var(--safe-right)); max-width: 40rem;
+    max-height: calc(100vh - 1rem - var(--safe-top) - var(--safe-bottom));
+    max-height: calc(100dvh - 1rem - var(--safe-top) - var(--safe-bottom));
+    padding: .75rem; border-radius: 1rem; overflow-y: auto; overscroll-behavior: contain; scroll-padding-block: 4rem 6rem;
+  }
+  dialog::backdrop { backdrop-filter: none; }
+  dialog .close { position: sticky; float: right; top: -.25rem; right: auto; z-index: 5; margin: -.25rem -.25rem .5rem .5rem; background: #fffdf5; }
+  dialog .close:focus-visible { outline-offset: -3px; }
+  .stage-close-top {
+    position: sticky; top: -.25rem; float: right; z-index: 5; min-width: 5rem; min-height: var(--ui-control-size);
+    margin: -.25rem -.25rem .5rem .5rem; padding: .5rem; border: 1px solid #b8cbb5; border-radius: .625rem;
+    background: #fffdf5; color: #344635; font-size: var(--ui-font-body); line-height: 1.4;
+  }
+  #stop-quiz-title { font-size: clamp(1.25rem, 1rem + .6vw, 1.75rem); margin: .75rem 0; }
+  #stop-quiz-question { font-size: clamp(1rem, .9rem + .4vw, 1.375rem); line-height: 1.6; margin: .75rem 0; }
+  #stop-quiz-intro, #stage-fiction, #stop-quiz-source { font-size: var(--ui-font-body); line-height: 1.7; margin-block: .625rem; }
+  #stage-fiction.notice { padding-top: .625rem; }
+  #stage-progress { margin-block: .625rem; font-size: var(--ui-font-body); }
+  .stage-board { gap: .375rem; }
+  .stage-tile { padding: .375rem .5rem; font-size: var(--ui-font-body); line-height: 1.5; }
+  .stage-options { grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); gap: .5rem; margin: .75rem 0; }
+  .stage-options button { min-width: 44px; min-height: max(48px, 3rem); padding: .625rem; font-size: var(--ui-font-reading); line-height: 1.6; border-radius: .75rem; }
+  #stop-quiz-feedback { min-height: 1.8em; font-size: var(--ui-font-body); line-height: 1.7; margin: .625rem 0; }
+  #stop-quiz-dialog .quiz-nav {
+    position: sticky; bottom: -.75rem; z-index: 4; display: grid; grid-template-columns: repeat(3, minmax(44px, 1fr));
+    gap: .375rem; margin-top: .75rem; padding: .625rem 0 .5rem; background: #fffdf5; box-shadow: 0 -.5rem .75rem #fffdf5;
+  }
+  #stop-quiz-dialog .quiz-nav button { min-width: 44px; min-height: var(--ui-control-size); padding: .375rem .25rem; font-size: var(--ui-font-label); line-height: 1.5; }
+  #stop-quiz-dialog .quiz-nav button:focus-visible, .stage-close-top:focus-visible, .stage-options button:focus-visible { outline-offset: -3px; }
+  .welcome-card { padding: 1rem; max-height: calc(100dvh - 1rem - var(--safe-top) - var(--safe-bottom)); }
+  #welcome { padding: calc(.5rem + var(--safe-top)) calc(.5rem + var(--safe-right)) calc(.5rem + var(--safe-bottom)) calc(.5rem + var(--safe-left)); }
+  .welcome-card h2 { font-size: clamp(1.375rem, 1.1rem + .7vw, 1.875rem); line-height: 1.45; margin: .5rem 0; }
+  .welcome-card > p { font-size: var(--ui-font-body); line-height: 1.7; margin-block: .625rem; }
+  .guide-choices { margin: .875rem 0; }
+  .guide-choices button { padding: .5rem .1875rem; gap: .375rem; }
+  .guide-choices small { font-size: var(--ui-font-label); }
+  #start-hint { padding: .5rem; margin-block: .625rem; }
+  #explore-start { position: sticky; bottom: 0; z-index: 3; margin: .625rem 0; box-shadow: 0 0 0 .375rem #fffdf5; min-height: max(48px, 3rem); padding: .625rem; }
+}
+
+@media (max-width: 900px) and (max-height: 500px) and (orientation: landscape),
+       (max-width: 1100px) and (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
+  .topbar { right: calc(var(--mobile-edge) + var(--safe-right) + var(--mobile-settings-width) + min(12rem, 28vw) + 1rem); }
+  .brand-icon { display: none; }
+  #tour-progress { top: calc(.5rem + var(--safe-top)); left: auto; right: calc(var(--mobile-edge) + var(--safe-right) + var(--mobile-settings-width) + .375rem); width: min(12rem, 28vw); }
+  #experience-settings, body[data-compact="true"] #experience-settings, body[data-gallery="true"] #experience-settings { top: calc(.5rem + var(--safe-top)); }
+  body[data-compact="true"] #tour-progress { top: calc(.5rem + var(--safe-top)); }
+  #experience-settings[open], body[data-gallery="true"] #experience-settings[open], #tour-progress[open] { position: fixed; top: calc(.5rem + var(--safe-top)); left: calc(var(--mobile-edge) + var(--safe-left)); right: calc(var(--mobile-edge) + var(--safe-right)); width: auto; max-height: calc(100dvh - var(--safe-top) - var(--mobile-dock-bottom) - var(--mobile-dock-height) - 1rem); }
+  .toolbar { max-height: 35dvh; }
+  #joystick { bottom: var(--mobile-walk-bottom); }
+  #story-card, body[data-compact="true"] #story-card { max-height: calc(100dvh - var(--safe-top) - var(--mobile-dock-bottom) - var(--mobile-dock-height) - 1rem); }
+  #travel-help { bottom: calc(var(--mobile-dock-bottom) + var(--mobile-dock-height) + .5rem); max-height: calc(100dvh - var(--safe-top) - var(--mobile-dock-bottom) - var(--mobile-dock-height) - 1rem); }
+}
+
+/* Large text and very small zoomed viewports get document flow, not overlapping HUD. */
+@media (max-width: 24rem) and (max-height: 32rem) and (orientation: portrait),
+       (max-width: 900px) and (max-height: 15rem) and (orientation: landscape),
+       (max-width: 1100px) and (pointer: coarse) and (max-height: 15rem) and (orientation: landscape) {
+  #app { display: grid; grid-template-columns: minmax(0, 1fr); gap: .5rem; align-content: start; overflow-y: auto; padding: calc(.5rem + var(--safe-top)) calc(var(--mobile-edge) + var(--safe-right)) calc(.5rem + var(--safe-bottom)) calc(var(--mobile-edge) + var(--safe-left)); }
+  #scene, #hotspots { position: fixed; inset: 0; }
+  .topbar, .places, .companions, #tour-progress, #experience-settings, #experience-settings[open], .walk-mode, body[data-compact="true"] .walk-mode, .toolbar, footer, #gallery-controls {
+    position: relative; inset: auto; transform: none; width: 100%; max-width: none; height: auto; margin: 0; grid-column: 1;
+  }
+  .topbar { order: 1; flex-wrap: wrap; }
+  #tour-progress { order: 2; }
+  #experience-settings { order: 3; max-height: 60dvh; }
+  .places { order: 4; }
+  .companions { order: 5; }
+  .walk-mode { order: 6; max-height: 50dvh; }
+  #joystick { position: relative; inset: auto; order: 7; margin: .5rem 0; }
+  .toolbar { order: 8; max-height: 60dvh; grid-template-columns: repeat(3, minmax(44px, 1fr)); grid-template-rows: none; grid-auto-rows: minmax(var(--ui-control-size), max-content); }
+  footer { order: 9; max-height: none; }
+  #gallery-controls { order: 8; max-height: 60dvh; }
+  body[data-compact="true"] #tour-progress, body[data-compact="true"] #experience-settings, body[data-gallery="true"] #experience-settings { top: auto; }
+  #tour-progress[open], #experience-settings[open], body[data-gallery="true"] #experience-settings[open] { position: relative; inset: auto; width: 100%; max-height: 60dvh; }
+  #story-card, body[data-compact="true"] #story-card, #travel-help { top: calc(.5rem + var(--safe-top)); bottom: auto; max-height: calc(100dvh - 1rem - var(--safe-top) - var(--safe-bottom)); }
+  #stop-quiz-dialog .quiz-nav { position: static; grid-template-columns: 1fr; box-shadow: none; }
+  .stage-close-top { min-width: 44px; }
+}
+@media (max-width: 279px) {
+  .toolbar { grid-template-columns: repeat(2, minmax(44px, 1fr)); }
+  #stop-quiz-dialog .quiz-nav, .stage-options { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+[hidden], dialog:not([open]), #app [hidden], #app dialog:not([open]) { display: none !important; visibility: hidden !important; pointer-events: none !important; }

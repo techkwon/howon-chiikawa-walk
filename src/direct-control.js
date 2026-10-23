@@ -262,6 +262,8 @@ export function createInputController({ element } = {}) {
     if (keys.delete(code) && !blocked(event.target)) event.preventDefault();
   });
   listen(win, 'blur', reset);
+  listen(win, 'resize', reset);
+  listen(win, 'orientationchange', reset);
   listen(doc, 'visibilitychange', () => { if (doc.hidden) reset(); });
   listen(doc, 'focusin', event => { if (blocked(event.target)) reset(); });
   listen(element, 'pointerdown', event => {
