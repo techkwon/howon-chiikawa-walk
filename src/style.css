@@ -711,3 +711,5 @@ dialog, #quiz-dialog, #farewell { width: var(--ui-dialog-width); max-width: var(
   visibility: hidden !important;
   pointer-events: none !important;
 }
+
+#stop-quiz-details summary {min-height:44px;padding:.7rem 0;cursor:pointer;font-size:var(--ui-font-label);color:#3c654d;}
