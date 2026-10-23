@@ -6,7 +6,11 @@ import {NODES,PLACES,route,nearestNode,insideBuilding,lanePoint} from './navigat
 import './style.css';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const canvas=$('#scene');let renderer;
-try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,preserveDrawingBuffer:true,powerPreference:'high-performance'});}catch(e){$('#loading-text').innerHTML='이 브라우저에서 3D 그래픽을 시작하지 못했습니다.<br>최신 Chrome 또는 Edge에서 다시 열어 주세요.';throw e;}
+try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,preserveDrawingBuffer:true,powerPreference:'high-performance'});}catch(e){
+ const card=$('.loading-card');card.setAttribute('role','alert');
+ card.innerHTML='<small>HOWON LITTLE WALK</small><h2>3D 화면을 열 수 없어요</h2><p>이 브라우저에서 WebGL 2 그래픽을<br>시작하지 못했습니다.</p><p class="fallback-note">다른 Chrome·Edge·Safari 브라우저에서 열어 보세요.<br>클라우드·원격 브라우저는 3D 그래픽이 제한될 수 있어요.</p><button id="retry-graphics" class="fallback-retry">다시 열기</button><p class="fallback-note">학교 모델과 세 친구는 그래픽 지원 환경에서 표시됩니다.</p>';
+ $('#retry-graphics').onclick=()=>location.reload();throw e;
+}
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.35;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 const scene=new THREE.Scene();scene.background=new THREE.Color('#d8e7e5');scene.fog=new THREE.Fog('#d8e7e5',175,520);
 const camera=new THREE.PerspectiveCamera(44,innerWidth/innerHeight,.1,1000);camera.position.set(118,93,145);
