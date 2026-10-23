@@ -80,7 +80,7 @@ test('start explains its disabled state, OX feedback uses words and travel recov
 });
 
 test('long disclosure and contact links wrap and scroll instead of covering fixed controls', () => {
-  assert.match(html, /운영 종료일 미정/);
+  assert.match(html, /공개 2026-10-31까지/);
   assert.match(html, /문의·삭제 요청/);
   assert.match(v4, /--ui-footer-space:\s*max\(88px, 5\.5rem\)/);
   assert.match(v4, /footer\s*\{[^}]*max-height:[^}]*overflow-y:\s*auto/s);
