@@ -40,7 +40,7 @@ function harness(selected = 0) {
     loaded: true, started: false, paused: true, manual: false, selected, follow: true, speed: 1, time: 0,
     galleryActive: false, uiPhase: 'welcome', destination: 'field', nextStopAt: null,
     tour: tours.createTourState(SCHOOL_STORIES.map(s => s.id)), stopQuiz: localQuiz.createStopQuizState(), stopQuizId: null, stopQuizWasPaused: false,
-    quiz: finalQuiz.createQuizState(), coins: [], kinds: ['chiikawa', 'hachiware', 'usagi'], names: ['치이카와', '하치와레', '우사기'],
+    quiz: finalQuiz.createQuizState(), coins: [], kinds: ['chiikawa', 'hachiware', 'usagi'], names: ['햄스터', '가르마', '토끼'],
     input: { reset() {}, getVector: () => ({ x: 0, z: 0 }), isRunning: () => false },
     audio: { unlock: () => Promise.resolve(), play() {} }, animateCharacter() {}, fx() {}, showSpeech() {}, syncPauseUI() {}, syncRunUI() {}, labelButton() {},
     canvas: { focus() {} }, setTimeout, toast(message) { context.lastToast = message; },

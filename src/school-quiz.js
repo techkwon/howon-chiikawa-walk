@@ -49,8 +49,8 @@ export const QUIZ_REACTIONS = {
     incorrect: { speech: '앗, 설명을 보니까 알겠다! 다시 알게 되면 됐지.', narration: '' },
   },
   usagi: {
-    correct: { speech: '야하!', narration: '우사기가 기쁘게 손을 들어요!' },
-    incorrect: { speech: '야하.', narration: '우사기가 함께 설명을 바라봐요. 틀려도 괜찮아요.' },
+    correct: { speech: '야하!', narration: '토끼가 기쁘게 손을 들어요!' },
+    incorrect: { speech: '야하.', narration: '토끼가 함께 설명을 바라봐요. 틀려도 괜찮아요.' },
   },
 };
 

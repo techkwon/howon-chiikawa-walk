@@ -1,16 +1,16 @@
 export const GUIDES = {
   "chiikawa": {
-    "name": "치이카와",
+    "name": "햄스터",
     "tone": "짧고 수줍은 반응과 차분한 안내 자막",
     "intro": {
       "speech": "와…!",
-      "narration": "치이카와와 함께 호원의 여덟 가지 이야기를 만나 보세요. 편한 속도로 걸어가요.",
+      "narration": "햄스터와 함께 호원의 여덟 가지 이야기를 만나 보세요. 편한 속도로 걸어가요.",
       "gesture": "small_wave",
       "originalFanDialogue": true
     },
     "ending": {
       "speech": "응…! 와아!",
-      "narration": "여덟 이야기를 모두 만났어요. 치이카와가 손을 흔들어요. 다음에 또 만나자!",
+      "narration": "여덟 이야기를 모두 만났어요. 햄스터가 손을 흔들어요. 다음에 또 만나자!",
       "gesture": "farewell_wave",
       "originalFanDialogue": true
     },
@@ -72,7 +72,7 @@ export const GUIDES = {
     }
   },
   "hachiware": {
-    "name": "하치와레",
+    "name": "가르마",
     "tone": "따뜻한 말과 호기심으로 함께 발견하기",
     "intro": {
       "speech": "같이 걸으니까 든든하다! 호원 이야기, 여덟 곳에서 만나 보자.",
@@ -144,24 +144,24 @@ export const GUIDES = {
     }
   },
   "usagi": {
-    "name": "우사기",
+    "name": "토끼",
     "tone": "짧은 감탄과 활발한 몸짓, 사실 설명은 별도 안내 자막",
     "intro": {
       "speech": "야하! 우라라!",
-      "narration": "우사기가 신나게 출발해요. 함께 호원의 여덟 가지 이야기를 찾아볼까요?",
+      "narration": "토끼가 신나게 출발해요. 함께 호원의 여덟 가지 이야기를 찾아볼까요?",
       "gesture": "small_hop",
       "originalFanDialogue": true
     },
     "ending": {
       "speech": "야하! 우라라!",
-      "narration": "여덟 이야기를 모두 만났어요. 우사기가 힘껏 손을 흔들어요. 다음에 또 만나자!",
+      "narration": "여덟 이야기를 모두 만났어요. 토끼가 힘껏 손을 흔들어요. 다음에 또 만나자!",
       "gesture": "farewell_wave",
       "originalFanDialogue": true
     },
     "stops": {
       "welcome": {
         "speech": "야하!",
-        "narration": "우사기가 먼저 손을 흔들어요. 이곳은 의정부시 호암로 205의 공립 호원중학교예요.",
+        "narration": "토끼가 먼저 손을 흔들어요. 이곳은 의정부시 호암로 205의 공립 호원중학교예요.",
         "gesture": "wave",
         "originalFanDialogue": true
       },
@@ -173,7 +173,7 @@ export const GUIDES = {
       },
       "library": {
         "speech": "야하!",
-        "narration": "우사기가 책 쪽을 가리켜요. 혜윰도서관 소식에는 2026년 독서모임과 독서챌린지 안내가 있어요.",
+        "narration": "토끼가 책 쪽을 가리켜요. 혜윰도서관 소식에는 2026년 독서모임과 독서챌린지 안내가 있어요.",
         "gesture": "look_at_book",
         "originalFanDialogue": true
       },
