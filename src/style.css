@@ -115,7 +115,7 @@ dialog {
 .fallback-stories summary { min-height: 44px; display: flex; align-items: center; line-height: 1.6; }
 #toast { z-index: 40; max-width: min(440px, calc(100vw - 32px - var(--safe-left) - var(--safe-right))); overflow-wrap: anywhere; text-align: center; }
 /* A story is foreground content, not a backdrop for a projected speech bubble. */
-#app:has(#story-card:not([hidden])) #character-speech,
+#app:has(#story-card:not([hidden]):not([data-arrival="true"])) #character-speech,
 #app:has(#welcome:not([hidden])) #character-speech,
 #app:has(dialog[open]) #character-speech { visibility: hidden !important; pointer-events: none; }
 #app:has(#story-card:not([hidden])) #hotspots { visibility: hidden; }
