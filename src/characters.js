@@ -1,7 +1,10 @@
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 // Original procedural fan-art. All geometry is authored here; no downloaded assets.
-const sphere = new THREE.SphereGeometry(1, 28, 20);
+// Smooth silhouettes for head/body; tiny facial details need fewer vertices, not fewer features.
+const sphere = new THREE.SphereGeometry(1, 24, 16);
+const detailSphere = new THREE.SphereGeometry(1, 12, 8);
 const materials = new Map();
 function material(color, roughness = .83) {
   if (!materials.has(color)) materials.set(color, new THREE.MeshStandardMaterial({ color, roughness }));
@@ -9,13 +12,13 @@ function material(color, roughness = .83) {
 }
 const C = { white: '#fffaf0', blue: '#72b8e7', cream: '#ffe3a0', ink: '#312e32', pink: '#f7a6ad', inner: '#ffc5b9' };
 function blob(parent, color, position, scale) {
-  const mesh = new THREE.Mesh(sphere, material(color));
+  const mesh = new THREE.Mesh(Math.max(...scale) < .31 ? detailSphere : sphere, material(color));
   mesh.position.set(...position); mesh.scale.set(...scale);
   mesh.castShadow = true; mesh.receiveShadow = true; parent.add(mesh); return mesh;
 }
 function stroke(parent, points, color = C.ink, radius = .018) {
   const curve = new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(...p)));
-  const mesh = new THREE.Mesh(new THREE.TubeGeometry(curve, 16, radius, 6, false), material(color));
+  const mesh = new THREE.Mesh(new THREE.TubeGeometry(curve, points.length === 2 ? 1 : 16, radius, 6, false), material(color));
   parent.add(mesh); return mesh;
 }
 function triangleEar(parent, side) {
@@ -34,6 +37,29 @@ function roundEar(parent, side, rabbit, color) {
   blob(pivot, color, [0, rabbit ? .42 : .13, 0], rabbit ? [.185,.62,.17] : [.245,.265,.20]);
   blob(pivot, C.inner, [0,rabbit ? .45 : .16,rabbit ? .151 : .177], rabbit ? [.087,.43,.032] : [.13,.145,.026]);
   pivot.rotation.z = -side * (rabbit ? .09 : .24); return pivot;
+}
+
+// Merge only static direct children. Animated tail/head/limbs/ears stay separate pivots.
+function batchStaticParts(group, exclusions = new Set()) {
+  const byMaterial = new Map();
+  for (const child of [...group.children]) {
+    if (!child.isMesh || exclusions.has(child)) continue;
+    const key = child.material.uuid;
+    if (!byMaterial.has(key)) byMaterial.set(key, []);
+    byMaterial.get(key).push(child);
+  }
+  for (const meshes of byMaterial.values()) {
+    if (meshes.length < 2) continue;
+    const geometries = meshes.map(mesh => { mesh.updateMatrix(); return mesh.geometry.clone().applyMatrix4(mesh.matrix); });
+    const geometry = mergeGeometries(geometries, false);
+    geometries.forEach(g => g.dispose());
+    if (!geometry) continue;
+    const combined = new THREE.Mesh(geometry, meshes[0].material);
+    combined.name = 'Batched static character details';
+    combined.castShadow = meshes.some(m => m.castShadow);
+    combined.receiveShadow = meshes.some(m => m.receiveShadow);
+    meshes.forEach(mesh => group.remove(mesh)); group.add(combined);
+  }
 }
 
 /** Feet rest at y=0, face points toward +Z. Parent may scale/rotate freely. */
@@ -91,6 +117,8 @@ export function createCharacter(kind = 'chiikawa') {
       stroke(head,[[side*.68,1.54,.47],[side*.82,1.54,.36]],C.ink,.012);
     }
   }
+  batchStaticParts(head); batchStaticParts(rig, new Set([tail]));
+  ears.forEach(ear => batchStaticParts(ear));
   root.userData.character = { type, rig, head, arms, legs, ears, earRest:ears.map(e=>e.rotation.z), tail };
   root.userData.kind = type;
   return root;
