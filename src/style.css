@@ -666,3 +666,48 @@ dialog, #quiz-dialog, #farewell { width: var(--ui-dialog-width); max-width: var(
   overflow-wrap: anywhere;
   white-space: normal;
 }
+
+/* Choosing a guide is preview-only; the explicit start button begins the walk. */
+.guide-choices button[aria-pressed="true"] {
+  border-color: #3c654d;
+  background: #e6efdb;
+  box-shadow: inset 0 0 0 2px #3c654d;
+}
+.guide-choices button[aria-pressed="true"] b { color: #264e35; }
+#explore-start {
+  display: block;
+  width: 100%;
+  min-height: var(--ui-control-size);
+  padding: .875rem 1rem;
+  margin: .5rem 0 1.25rem;
+  border: 2px solid #3c654d;
+  border-radius: var(--ui-radius);
+  background: #3c654d;
+  color: #fffdf5;
+  font-size: var(--ui-font-body);
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+#explore-start:disabled {
+  opacity: 1;
+  cursor: not-allowed;
+  color: #576650;
+  background: #e6ebde;
+  border-color: #c6d0be;
+}
+#explore-start:focus-visible { outline-offset: 3px; }
+@media (forced-colors: active) {
+  .guide-choices button[aria-pressed="true"] { outline: 3px solid Highlight; outline-offset: -4px; }
+  #explore-start { border-color: ButtonText; }
+}
+
+/* Visibility is state, not layout: responsive flex/grid rules must never reveal
+   a closed dialog or a hidden panel. display:none also removes their descendants
+   from keyboard navigation until the application explicitly opens/shows them. */
+[hidden], dialog:not([open]), #app [hidden], #app dialog:not([open]) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
