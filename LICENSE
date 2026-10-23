@@ -1,0 +1,67 @@
+프로젝트 권리 및 사용 범위 고지
+==============================
+
+1. 적용 범위
+
+이 저장소는 개인·비상업·기간 한정 비공식 팬 데모의 코드와 자료를 포함합니다.
+학교 또는 원작 권리자의 공식 서비스, 승인·인증·후원 자료가 아닙니다.
+비상업적 목적이라는 사실만으로 제3자 권리 이용 허락이 생기지 않습니다.
+
+2. 프로젝트 작성 부분
+
+프로젝트에서 작성한 코드, UI, 문구, 절차적 제작물에는 이 문서로 MIT 등
+별도의 공개 오픈소스 라이선스를 부여하지 않습니다. 공개 URL 또는 소스의
+열람 가능성은 재배포·상업 이용·재허락에 대한 포괄적 허가를 의미하지 않습니다.
+별도의 허락이 필요한 이용은 관련 권리자에게 확인해야 합니다.
+이 고지는 법률상 허용되는 이용을 제한하려는 것이 아닙니다.
+
+3. 제3자 캐릭터·학교 참고 자료
+
+치이카와·하치와레·우사기의 이름, 캐릭터 표현 및 그 밖의 제3자 자료의 권리는
+각 권리자에게 있습니다. 팬 지오메트리나 렌더를 직접 만들었더라도 원작 캐릭터에
+관한 권한을 취득하거나 제3자에게 부여한 것으로 볼 수 없습니다.
+학교 외관 근사 GLB, 팬 캐릭터 PNG, 아이콘 및 화면 저장물에 대해서도 이 문서는
+제3자 권리 이용을 허락하지 않습니다. 공식 모델·음원·사진을 제공하는 서비스가
+아니며, 출처 표시는 권리자의 허락이나 학교의 승인을 뜻하지 않습니다.
+제작 요소와 공개 자료의 출처는 CREDITS.md에 별도로 기록합니다.
+
+4. 별도 라이선스가 있는 소프트웨어
+
+외부 패키지는 각 패키지의 원래 라이선스가 적용됩니다. 아래의 three.js MIT
+허가와 저작권 고지는 three.js 및 그 라이선스 적용 부분에 한정됩니다.
+프로젝트 고유 코드, 학교 자료 또는 팬 캐릭터 자산에 적용되는 허가가 아닙니다.
+다른 개발·빌드 의존성의 고지는 각 설치 패키지와 CREDITS.md를 확인하십시오.
+
+5. 문의 및 삭제 요청
+
+운영 종료일: 미정(임시). 권리자·학교 등 관계자의 삭제 요청 시 해당 공개물을
+내리거나 제공을 중단합니다. 문의: https://github.com/techkwon/howon-chiikawa-walk/issues
+공개 이슈에 학생 개인정보, 신분증, 비밀번호 또는 민감한 증빙을 올리지 마십시오.
+이 문서는 권리 허가를 받았다는 증빙이나 법적 적합성의 보증이 아닙니다.
+
+----------------------------------------------------------------
+Third-party notice: three.js only
+Source: installed package three@0.180.0, LICENSE
+----------------------------------------------------------------
+
+The MIT License
+
+Copyright © 2010-2025 three.js authors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.

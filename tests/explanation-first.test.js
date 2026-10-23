@@ -22,10 +22,10 @@ function harness(storyNumber=0){
   };
   const story=SCHOOL_STORIES[storyNumber],point=NODES[story.tourNode];
   const stops=[{id:story.id,x:point[0],z:point[1],radius:6}];
-  const c={SCHOOL_STORIES:[story],NODES,STOP_QUIZZES,started:true,loaded:true,uiPhase:'game',galleryActive:false,paused:false,manual:true,selected:0,activeGoalId:null,storyIndex:0,stopQuizId:null,stopQuizWasPaused:false,introShownIds:new Set(),actors:[{model:{position:{x:point[0],z:point[1]}},wait:0}],arrivalStops:stops,arrivalGate:createArrivalGate({x:point[0]+10,z:point[1]},stops),sampleArrival,tour:createTourState([story.id]),stopQuiz:createStopQuizState(),visitStop,getProgress,isStopQuizCompleted,nextStopAt:null,time:0,$:selector=>selector==='dialog[open]'?null:element(selector),document:{createElement:()=>({})},audio:{play(){calls.discover++;}},fx(){},toast(){},updateGuideSpeech(){},refreshTour(){},input:{reset(){}},syncRunUI(){},syncPauseUI(){},renderStopQuiz(){},navigateStop(){calls.navigate++;}};
+  const c={SCHOOL_STORIES:[story],NODES,STOP_QUIZZES,started:true,loaded:true,uiPhase:'game',galleryActive:false,paused:false,manual:true,selected:0,activeGoalId:null,storyIndex:0,stopQuizId:null,stopQuizWasPaused:false,introShownIds:new Set(),travelRequest:null,actors:[{model:{position:{x:point[0],z:point[1]}},wait:0}],arrivalStops:stops,arrivalGate:createArrivalGate({x:point[0]+10,z:point[1]},stops),sampleArrival,tour:createTourState([story.id]),stopQuiz:createStopQuizState(),visitStop,getProgress,isStopQuizCompleted,nextStopAt:null,time:0,$:selector=>selector==='dialog[open]'?null:element(selector),document:{createElement:()=>({})},audio:{play(){calls.discover++;}},fx(){},toast(){},updateGuideSpeech(){},refreshTour(){},input:{reset(){}},syncRunUI(){},syncPauseUI(){},renderStopQuiz(){},navigateStop(){calls.navigate++;}};
   c.applyTour=next=>{c.tour=next;};
   vm.createContext(c);
-  vm.runInContext(['openStory','checkTourArrival','openStopQuiz'].map(productionFunction).join('\n'),c);
+  vm.runInContext(['clearTravelHelp','openStory','checkTourArrival','openStopQuiz'].map(productionFunction).join('\n'),c);
   const clickHandler=source.match(/\$\('#story-read'\)\.onclick=\(\)=>openStopQuiz\(storyIndex\);/);
   assert.ok(clickHandler,'production explicit quiz button binding exists');
   vm.runInContext(clickHandler[0],c);

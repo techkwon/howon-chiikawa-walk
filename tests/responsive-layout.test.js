@@ -112,15 +112,15 @@ test('44 CSS-pixel target floor survives fluid sizing and a 200% user font setti
   assert.match(fluid, /\.toolbar button, \.toolbar \.primary, \.toolbar #reset\s*\{[^}]*min-width:\s*44px/);
 });
 
-test('phone toolbar retains all eight controls and enough track width at 100% and 200% text', () => {
+test('phone toolbar retains all six core controls and enough track width at 100% and 200% text', () => {
   const nav = html.match(/<nav class="toolbar[\s\S]*?<\/nav>/)?.[0] || '';
   const ids = [...nav.matchAll(/<button id="([^"]+)"/g)].map(match => match[1]);
-  assert.deepEqual(ids, ['play', 'follow', 'overview', 'gallery-toggle', 'photo', 'speed', 'quality', 'reset']);
+  assert.deepEqual(ids, ['play', 'follow', 'overview', 'gallery-toggle', 'photo', 'reset']);
   for (const width of [320, 360, 390, 430, 480]) {
     for (const root of [16, 32]) {
       const ctx = context(width, 844, root);
       const available = token('--ui-available-width', ctx);
-      const track = (available - .375 * root * 2 - 2 - .25 * root * 3) / 4;
+      const track = (available - .375 * root * 2 - 2 - .25 * root * 2) / 3;
       assert.ok(track >= 44, `${width}px / ${root}px root: track ${track}`);
       assert.ok(token('--toolbar-height', ctx) >= token('--ui-control-size', ctx) * 2);
     }
