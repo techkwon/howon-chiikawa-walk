@@ -88,8 +88,8 @@ function computed(target, viewport, state = {}) {
   return result;
 }
 
-test('every dialog in the initial HTML is closed and cannot start as an open quiz', () => {
-  assert.deepEqual(dialogs.map(dialog => dialog.id).sort(), ['farewell', 'info', 'quiz-dialog', 'stop-quiz-dialog']);
+test('every dialog in the initial HTML is closed and cannot start as an open game', () => {
+  assert.deepEqual(dialogs.map(dialog => dialog.id).sort(), ['farewell', 'info', 'stop-quiz-dialog']);
   for (const dialog of dialogs) assert.equal(dialog.open, false, `${dialog.id} has an initial open attribute`);
   assert.match(html, /<div id="welcome"(?![^>]*\bhidden\b)/);
   for (const id of ['story-card', 'gallery-controls', 'character-speech', 'run-toggle']) {
@@ -106,7 +106,7 @@ test('explicit unconditional guards remove closed dialogs and hidden panels from
   }
 });
 
-test('closed quiz and information dialogs remain non-rendered through every responsive layout', () => {
+test('closed game and information dialogs remain non-rendered through every responsive layout', () => {
   for (const [width, height] of viewports) for (const root of [16, 32]) for (const dialog of dialogs) {
     const result = computed(dialog, { width, height, root });
     assert.equal(result.display, 'none', `${dialog.id} visible at ${width}×${height}, root ${root}`);

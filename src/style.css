@@ -853,3 +853,10 @@ body[data-gallery="true"] #travel-help { display: none !important; }
 }
 
 #stop-quiz-details summary {min-height:44px;padding:.7rem 0;cursor:pointer;font-size:var(--ui-font-label);color:#3c654d;}
+
+/* Stage missions use native buttons: tap or Tab + Enter, never drag-only. */
+.stage-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;margin:1rem 0}.stage-options button{min-height:3rem;padding:.8rem;text-align:left;white-space:normal;overflow-wrap:anywhere;font-size:clamp(.9rem,.8rem + .3vw,1.1rem);border:1px solid var(--line,#c8d8d0);border-radius:1rem;background:var(--paper,#fff);color:var(--ink,#264336)}.stage-options button[aria-pressed="true"]{outline:3px solid #699c82;outline-offset:1px}.stage-options button:disabled{opacity:.65}.stage-options button:focus-visible{outline:3px solid #28785b;outline-offset:3px}#stage-progress{font-weight:700}#stage-fiction{font-size:.85rem;line-height:1.55}#stop-quiz-feedback{min-height:3em;white-space:pre-wrap}#stop-quiz-feedback[data-tone="incorrect"]::before{content:"↺ ";}#stop-quiz-feedback[data-tone="correct"]::before{content:"✓ ";}@media(max-width:380px){.stage-options{grid-template-columns:1fr}}
+
+.stage-board{display:flex;flex-wrap:wrap;gap:.45rem}.stage-tile{padding:.5rem .7rem;border:1px solid #adc4b5;border-radius:.6rem;background:#edf5ed;color:#264336;overflow-wrap:anywhere}.stage-tile.matched,.stage-tile.done{border-width:2px;background:#dceedd}
+
+#stop-quiz-dialog[data-game-type="order"] .stage-board{counter-reset:step}#stop-quiz-dialog[data-game-type="order"] .stage-tile::before{counter-increment:step;content:counter(step) " · ";font-weight:800}#stop-quiz-dialog[data-game-type="collect"] .stage-tile{border-radius:1.2rem 1.2rem .5rem .5rem}#stop-quiz-dialog[data-game-type="match"] .stage-options button{border-style:dashed}#stop-quiz-dialog[data-game-type="path"] .stage-board{border-left:3px solid #8bab98;padding-left:.6rem}

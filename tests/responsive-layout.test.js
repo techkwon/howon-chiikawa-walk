@@ -143,7 +143,7 @@ test('user font enlargement grows labels rather than hitting a pixel cap', () =>
 });
 
 test('all dialogs, reading panels, settings and dense controls remain scrollable', () => {
-  for (const id of ['info', 'quiz-dialog', 'stop-quiz-dialog', 'farewell']) assert.ok(html.includes(`<dialog id="${id}"`));
+  for (const id of ['info', 'stop-quiz-dialog', 'farewell']) assert.ok(html.includes(`<dialog id="${id}"`));
   assert.match(fluid, /dialog, #quiz-dialog, #farewell\s*\{[^}]*width:\s*var\(--ui-dialog-width\)/);
   assert.match(css, /dialog\s*\{[^}]*overflow-y:\s*auto/s);
   for (const selector of ['.toolbar', '.companions', '.walk-mode', '#gallery-controls']) {

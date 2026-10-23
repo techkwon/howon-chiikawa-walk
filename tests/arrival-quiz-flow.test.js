@@ -1,3 +1,32 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {createTourState,visitStop,readStop,getProgress,restartTour} from '../src/tour-state.js';import {STOP_QUIZZES,createStopQuizState,answerStopQuestion,retryStopQuestion} from '../src/stop-quiz.js';
-test('arrival alone does not complete a stop; answering marks it once',()=>{let tour=createTourState(Object.keys(STOP_QUIZZES)),quiz=createStopQuizState();tour=visitStop(tour,'welcome');assert.equal(getProgress(tour).completed,0);quiz=answerStopQuestion(quiz,'welcome',false);tour=readStop(tour,'welcome');assert.equal(getProgress(tour).completed,1);quiz=answerStopQuestion(quiz,'welcome',true);tour=visitStop(tour,'welcome');assert.equal(getProgress(tour).completed,1);assert.equal(quiz.answers.welcome,false);quiz=retryStopQuestion(quiz,'welcome');assert.equal(quiz.completedIds.length,1);});
-test('all eight answered stops enable final review, reset clears both activities',()=>{let tour=createTourState(Object.keys(STOP_QUIZZES)),quiz=createStopQuizState();for(const id of Object.keys(STOP_QUIZZES)){tour=visitStop(tour,id);quiz=answerStopQuestion(quiz,id,true);tour=readStop(tour,id);}assert.equal(getProgress(tour).done,true);assert.equal(quiz.completedIds.length,8);tour=restartTour(tour);quiz=createStopQuizState();assert.equal(getProgress(tour).done,false);assert.equal(quiz.completedIds.length,0);});
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import * as stages from '../src/stage-games.js';
+import { createHarness, arrive, tours } from './helpers/minigame-harness.js';
+import { clickOption, finishStage, STAGE_PATHS } from './helpers/stage-paths.js';
+
+test('production arrival and a partial choice do not earn a stamp; interactive completion earns it once', () => {
+  const h = createHarness(stages);
+  h.start(); arrive(h, 0);
+  assert.equal(tours.getProgress(h.context.tour).completed, 0);
+  h.$('#story-read').click();
+  clickOption(h, STAGE_PATHS.welcome[0]);
+  assert.equal(tours.getProgress(h.context.tour).completed, 0);
+  finishStage(h, stages, 'welcome', { from: 1 });
+  assert.equal(tours.getProgress(h.context.tour).completed, 1);
+  h.$('#stop-quiz-retry').click();
+  assert.equal(tours.getProgress(h.context.tour).completed, 1);
+  assert.equal(h.context.stopQuiz.completedIds.length, 1);
+});
+
+test('production close/next cannot award unplayed or partially played stages', () => {
+  const h = createHarness(stages);
+  h.start(); arrive(h, 0, { rescue: true });
+  h.$('#story-read').click();
+  assert.equal(h.$('#stop-quiz-next').disabled, true);
+  h.$('#stop-quiz-next').click();
+  assert.equal(h.$('#stop-quiz-dialog').open, true);
+  h.$('#stop-quiz-close').click();
+  assert.equal(tours.getProgress(h.context.tour).completed, 0);
+  h.context.openFinalQuiz();
+  assert.equal(h.$('#farewell').open, false);
+});

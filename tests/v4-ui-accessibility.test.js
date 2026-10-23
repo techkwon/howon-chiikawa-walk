@@ -62,17 +62,17 @@ test('200% text keeps document reflow, readable labels, keyboard focus and reduc
   assert.doesNotMatch(html, /user-scalable\s*=\s*no|maximum-scale\s*=\s*1(?:\D|$)/);
 });
 
-test('start explains its disabled state, OX feedback uses words and travel recovery starts hidden', () => {
+test('start explains its disabled state, game feedback uses words and travel recovery starts hidden', () => {
   const start = button(html, 'explore-start')?.[0] || '';
   assert.match(start, /aria-describedby="start-hint"/);
   assert.match(start, /\bdisabled(?:\s|>)/);
   assert.match(html, /id="start-hint"[^>]*>[^<]*친구[^<]*시작/);
-  assert.match(main, /✓ 맞았어요/);
-  assert.match(main, /↺ 다시 알아봐요/);
-  assert.match(main, /✓ 정답/);
-  assert.match(main, /↺ 다시 알아보기/);
+  assert.match(main, /틀려도 다시 할 수 있어요/);
+  assert.match(main, /button\.setAttribute\('aria-pressed'/);
+  assert.match(html, /id="stage-options"[^>]*aria-label="미니게임 선택지"/);
+  assert.match(html, /id="stage-progress"[^>]*role="status"/);
   assert.match(html, /id="stop-quiz-feedback"[^>]*aria-live="polite"/);
-  assert.match(html, /id="quiz-feedback"[^>]*aria-live="polite"/);
+  assert.doesNotMatch(html, /id="(?:quiz-dialog|quiz-o|quiz-x|stop-quiz-o|stop-quiz-x)"/);
   assert.match(html, /id="travel-help"[^>]*\bhidden\b/);
   assert.match(v4, /#travel-help button\s*\{[^}]*min-height:\s*var\(--ui-control-size\)/);
   assert.match(v4, /body\[data-gallery="true"\] #travel-help\s*\{\s*display:\s*none\s*!important/);
