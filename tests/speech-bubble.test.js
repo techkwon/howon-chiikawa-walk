@@ -132,3 +132,22 @@ test('input data can be frozen and is never mutated', () => {
   assert.equal(positionSpeechBubble(options).visible, true);
   assert.deepEqual(options, before);
 });
+
+test('cached UI obstacles allow below-head fallback and hide when both sides are blocked', () => {
+  const options={ndc:{x:0,y:0,z:0},inFront:true,width:390,height:700,bubbleWidth:220,bubbleHeight:100,insets:{top:12,bottom:12,left:12,right:12}};
+  const top={left:50,right:340,top:200,bottom:340};
+  const p=positionSpeechBubble({...options,obstacles:[top]});
+  assert.equal(p.visible,true);assert.equal(p.placement,'below');
+  assert.equal(positionSpeechBubble({...options,obstacles:[top,{left:0,right:390,top:350,bottom:600}]}).visible,false);
+});
+
+test('fluid bubble sizes remain inside viewport across phones, foldables, tablets and desktops', () => {
+  for(const [width,height] of [[320,568],[360,640],[390,844],[768,1024],[1024,768],[1440,900],[1920,1080],[280,653],[653,280],[720,540]]){
+    for(const fontScale of [1,1.25,2]){
+      const bubbleWidth=Math.min(width-24,260*fontScale),bubbleHeight=140*fontScale;
+      const result=positionSpeechBubble({ndc:{x:.9,y:.8,z:0},inFront:true,width,height,bubbleWidth,bubbleHeight,insets:{top:12,right:12,bottom:12,left:12}});
+      if(bubbleHeight>height-24){assert.equal(result.visible,false);continue;}
+      assert.equal(result.visible,true);assert.ok(result.x>=12);assert.ok(result.y>=12);assert.ok(result.x+bubbleWidth<=width-12+.001);assert.ok(result.y+bubbleHeight<=height-12+.001);
+    }
+  }
+});

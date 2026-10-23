@@ -10,7 +10,7 @@ const hidden = () => ({ visible: false, x: 0, y: 0, tailX: 0, placement: 'above'
 export function positionSpeechBubble(options = {}) {
   const {
     ndc, inFront, width, height, bubbleWidth, bubbleHeight,
-    insets = {}, gap = 18,
+    insets = {}, gap = 18, obstacles = [],
   } = options ?? {};
   if (!ndc || !inFront || ![ndc.x, ndc.y, ndc.z].every(Number.isFinite)
     || [ndc.x, ndc.y, ndc.z].some(value => value < -1 || value > 1)
@@ -30,9 +30,15 @@ export function positionSpeechBubble(options = {}) {
   const aboveY = anchorY - gap - bubbleHeight;
   const belowY = anchorY + gap;
   const fits = y => y >= top && y <= maxY;
-  const placement = !fits(aboveY) && fits(belowY) ? 'below' : 'above';
+  let placement = !fits(aboveY) && fits(belowY) ? 'below' : 'above';
   const x = clamp(anchorX - bubbleWidth / 2, left, maxX);
-  const y = clamp(placement === 'below' ? belowY : aboveY, top, maxY);
+  let y = clamp(placement === 'below' ? belowY : aboveY, top, maxY);
+  const overlaps = cy => Array.isArray(obstacles) && obstacles.some(r => r && [r.left,r.right,r.top,r.bottom].every(Number.isFinite) && x < r.right + 6 && x + bubbleWidth > r.left - 6 && cy < r.bottom + 6 && cy + bubbleHeight > r.top - 6);
+  if (overlaps(y)) {
+    const alternate = placement === 'above' ? belowY : aboveY;
+    if (!fits(alternate) || overlaps(alternate)) return hidden();
+    y = alternate; placement = placement === 'above' ? 'below' : 'above';
+  }
   // Extremely narrow bubbles cannot accommodate two 12px tail margins.
   const tailMargin = Math.min(12, bubbleWidth / 2);
   const tailX = clamp(anchorX - x, tailMargin, bubbleWidth - tailMargin);

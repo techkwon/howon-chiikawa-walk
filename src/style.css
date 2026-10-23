@@ -408,3 +408,261 @@ body[data-compact="true"] .intro, body[data-compact="true"] .places, body[data-c
 body[data-gallery="true"] #hud-toggle{display:none;}
 @media(min-width:701px) and (min-height:501px){#experience-settings{right:calc(220px + var(--safe-right));}}
 @media(max-width:700px){.top-actions{gap:6px}.brand{min-width:0}.brand strong{font-size:11px;white-space:normal}.brand small{font-size:7px;letter-spacing:1px}.brand-icon{flex-shrink:0}}
+
+/* FLUID UI SCALE: CSS viewport units are independent of WebGL devicePixelRatio. */
+:root {
+  --ui-font-micro: clamp(.625rem, .55rem + .15vw, .8125rem);
+  --ui-font-label: clamp(.6875rem, .6rem + .18vw, .875rem);
+  --ui-font-body: clamp(.8125rem, .7rem + .24vw, 1rem);
+  --ui-font-reading: clamp(.875rem, .75rem + .28vw, 1.125rem);
+  --ui-font-heading: clamp(1.375rem, 1.05rem + .85vw, 2.125rem);
+  --ui-font-display: clamp(1.75rem, 1.2rem + 1.4vw, 3rem);
+  --ui-control-size: max(44px, 2.75rem);
+  --ui-gap: clamp(.375rem, .3rem + .2vw, .75rem);
+  --ui-edge: clamp(.75rem, 2.4vw, 3.5rem);
+  --ui-padding: clamp(.75rem, .45rem + .6vw, 1.5rem);
+  --ui-radius: clamp(.75rem, .55rem + .7vw, 1.75rem);
+  --ui-available-width: calc(100vw - var(--safe-left) - var(--safe-right) - var(--ui-edge) * 2);
+  --ui-rail-width: min(clamp(10.5rem, 13vw, 15rem), var(--ui-available-width));
+  --ui-companion-width: min(clamp(13rem, 17vw, 19rem), var(--ui-available-width));
+  --ui-story-width: min(clamp(18rem, 25vw, 27rem), var(--ui-available-width));
+  --ui-speech-width: min(clamp(15rem, 19vw, 22rem), var(--ui-available-width));
+  --ui-dialog-width: min(34rem, var(--ui-available-width));
+  --ui-peek-width: min(10rem, calc((var(--ui-available-width) - var(--ui-gap)) / 2));
+  --ui-joystick-size: clamp(5.5rem, 9vmin, 7rem);
+  --ui-knob-size: clamp(2.5rem, 4vmin, 3rem);
+}
+/* Do not set an absolute root font size or disable the user's browser zoom. */
+html { font-size: 100%; -webkit-text-size-adjust: auto; text-size-adjust: auto; }
+body { font-size: var(--ui-font-body); }
+button, select, summary, input, .friend, .place, .toolbar button, .walk-mode button,
+#hud-toggle, #story-close, .close, #speech-details, #story-read, .story-actions button,
+#tour-checklist button, #tour-restart, .quiz-nav button, .fallback-retry, #farewell button,
+#gallery-controls button, #gallery-controls select, #experience-settings > button,
+#experience-settings input, #experience-settings select, #tour-progress summary,
+#experience-settings summary, footer button { min-height: var(--ui-control-size); }
+button, select, summary { overflow-wrap: anywhere; }
+.circle, #hud-toggle, #story-close, .close { min-width: 44px; }
+.brand strong { font-size: clamp(.8125rem, .7rem + .35vw, 1.125rem); line-height: 1.45; }
+.brand small, .eyebrow, .section-label > span { font-size: var(--ui-font-micro); }
+.brand-icon { width: clamp(2.25rem, 3.5vw, 3.5rem); height: clamp(2.25rem, 3.5vw, 3.5rem); font-size: clamp(1.75rem, 2.5vw, 2.625rem); }
+.circle, #hud-toggle { font-size: var(--ui-font-label); }
+.intro h1 { font-size: var(--ui-font-display); }
+.intro p, .weather span, .section-label, .friend b, .place b { font-size: var(--ui-font-label); }
+.friend small, .place small, #friend-status, .view-label small, footer, footer button { font-size: var(--ui-font-micro); }
+.avatar { width: clamp(1.75rem, 2.4vw, 2.75rem); height: clamp(1.75rem, 2.4vw, 2.75rem); font-size: clamp(1rem, 1.4vw, 1.5rem); }
+.panel { border-radius: var(--ui-radius); }
+#story-card { padding: var(--ui-padding); }
+#story-card h2, dialog h2, #quiz-question { font-size: var(--ui-font-heading); }
+#story-summary, #story-points, dialog p, dialog li, .fallback-stories p, #farewell p { font-size: var(--ui-font-reading) !important; }
+#story-date, .story-location-note, #story-visit-status, #story-sources a, #quiz-source, #quiz-step, dialog a, dialog .notice { font-size: var(--ui-font-label); }
+#story-read, .story-actions button, .quiz-nav button, #farewell button { font-size: var(--ui-font-body); padding: .625rem .875rem; }
+.story-actions, .quiz-nav { gap: var(--ui-gap); }
+#story-close, .close { font-size: clamp(1.5rem, 1.2rem + .5vw, 2rem); }
+#character-speech { width: var(--ui-speech-width); max-width: var(--ui-available-width); padding: var(--ui-padding); border-radius: var(--ui-radius); }
+#speech-speaker, #speech-details { font-size: var(--ui-font-label); }
+#speech-line { font-size: clamp(1rem, .8rem + .45vw, 1.5rem); line-height: 1.5; }
+#speech-narration { font-size: var(--ui-font-body); line-height: 1.75; }
+#speech-details { white-space: normal; }
+.hotspot { font-size: var(--ui-font-label); padding: .5rem .75rem; }
+#tour-progress summary, #tour-checklist button, #tour-restart, .coin-counter, summary .coin-counter { font-size: var(--ui-font-label); }
+#tour-progress summary::after { font-size: var(--ui-font-micro); }
+#tour-count { font-size: clamp(1.25rem, 1rem + .55vw, 1.875rem); }
+summary .coin-counter b { font-size: var(--ui-font-label); }
+#experience-settings { padding: var(--ui-padding); }
+#experience-settings summary, #experience-settings label { font-size: var(--ui-font-label); }
+#experience-settings > button, #experience-settings select { font-size: var(--ui-font-body); }
+#experience-settings input { cursor: pointer; }
+#environment-status { font-size: var(--ui-font-micro); }
+.toolbar button { font-size: clamp(1rem, .875rem + .3vw, 1.375rem); }
+.toolbar button span, .toolbar button b, .walk-mode button, .view-label > span { font-size: var(--ui-font-label); }
+#gallery-controls button, #gallery-controls select, #gallery-controls #gallery-view, #gallery-controls #gallery-close { font-size: var(--ui-font-body) !important; }
+#gallery-caption { font-size: var(--ui-font-label); }
+#gallery-controls { max-height: min(50dvh, 20rem); overflow-y: auto; overscroll-behavior: contain; }
+#toast { font-size: var(--ui-font-body); max-width: min(32rem, var(--ui-available-width)); }
+dialog, #quiz-dialog, #farewell { width: var(--ui-dialog-width); max-width: var(--ui-available-width); padding: var(--ui-padding); }
+.welcome-card { width: min(46rem, 100%); padding: clamp(1rem, 3vw, 3rem); }
+.welcome-card h2 { font-size: var(--ui-font-display); }
+.welcome-card > p, .guide-choices b, .loading-card p { font-size: var(--ui-font-body); }
+.welcome-note, .guide-choices small { font-size: var(--ui-font-label); }
+.guide-choices { gap: var(--ui-gap); }
+.guide-choices button { border-radius: var(--ui-radius); }
+.loading-card { width: min(28rem, 100%); }
+.loading-card h2 { font-size: var(--ui-font-heading); }
+.loading-card small, .loading-card[role="alert"] small { font-size: var(--ui-font-micro); }
+.loading-card[role="alert"] { width: min(32rem, 100%); }
+.fallback-stories summary { font-size: var(--ui-font-body); }
+.quiz-options button { width: clamp(5rem, 7vw, 7rem); height: clamp(5rem, 7vw, 7rem); font-size: clamp(2rem, 3vw, 3.5rem); }
+#quiz-feedback { font-size: var(--ui-font-reading); }
+#quiz-explanation, #final-score { font-size: var(--ui-font-body); }
+#joystick { width: var(--ui-joystick-size); height: var(--ui-joystick-size); }
+#joystick-knob { width: var(--ui-knob-size); height: var(--ui-knob-size); left: calc((100% - var(--ui-knob-size)) / 2); top: calc((100% - var(--ui-knob-size)) / 2); }
+.joystick-label { font-size: var(--ui-font-micro); }
+
+@media (min-width: 701px) and (min-height: 501px) {
+  .topbar { top: calc(var(--safe-top) + var(--ui-edge)); left: calc(var(--safe-left) + var(--ui-edge)); right: calc(var(--safe-right) + var(--ui-edge)); }
+  .top-actions { gap: var(--ui-gap); }
+  .intro { top: calc(var(--safe-top) + clamp(7rem, 10vh, 10rem)); left: calc(var(--safe-left) + var(--ui-edge)); max-width: min(28vw, 24rem); }
+  .intro h1 { margin-block: .75rem; }
+  .companions { left: calc(var(--safe-left) + var(--ui-edge)); width: var(--ui-companion-width); padding: var(--ui-padding); bottom: calc(var(--safe-bottom) + clamp(9rem, 16vh, 12rem)); max-height: calc(100dvh - 21rem); overflow-y: auto; }
+  .friend { gap: var(--ui-gap); padding: .5rem; }
+  .places { right: calc(var(--safe-right) + var(--ui-edge)); top: calc(var(--safe-top) + clamp(7.5rem, 11vh, 10rem)); width: var(--ui-rail-width); padding: var(--ui-padding); }
+  .place { padding: .625rem .375rem; grid-template-columns: 2rem 1fr; }
+  #tour-progress { right: calc(var(--safe-right) + var(--ui-edge)); top: calc(var(--safe-top) + clamp(25rem, 34vh, 31rem)); width: var(--ui-rail-width); padding: var(--ui-padding); max-height: max(6rem, calc(100dvh - var(--safe-top) - var(--safe-bottom) - clamp(25rem, 34vh, 31rem) - 4rem)); }
+  #experience-settings { top: calc(var(--safe-top) + var(--ui-edge)); right: calc(var(--safe-right) + var(--ui-edge) + 9rem); width: clamp(11rem, 15vw, 17rem); }
+  #experience-settings[open] { max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - var(--ui-edge) - 5rem); }
+  #story-card { right: calc(var(--safe-right) + var(--ui-edge) + var(--ui-rail-width) + var(--ui-gap)); top: calc(var(--safe-top) + clamp(7.5rem, 11vh, 10rem)); width: var(--ui-story-width); max-height: max(7rem, calc(100dvh - var(--safe-top) - var(--safe-bottom) - 20rem)); }
+  .toolbar { width: max-content; max-width: var(--ui-available-width); padding: var(--ui-gap); gap: var(--ui-gap); bottom: calc(var(--safe-bottom) + max(3.5rem, 6vh)); overflow-x: auto; overscroll-behavior: contain; }
+  .toolbar button, .toolbar .primary { flex-shrink: 0; padding: .625rem clamp(.5rem, .8vw, 1rem); }
+  .walk-mode { max-width: var(--ui-available-width); bottom: calc(var(--safe-bottom) + clamp(9rem, 17vh, 13rem)); gap: var(--ui-gap); padding: var(--ui-gap); }
+  .walk-mode button { padding: .625rem .875rem; }
+  .view-label { bottom: calc(var(--safe-bottom) + clamp(13rem, 25vh, 18rem)); }
+  #joystick { left: calc(var(--safe-left) + var(--ui-edge) + var(--ui-companion-width) + 1rem); bottom: calc(var(--safe-bottom) + clamp(9rem, 17vh, 13rem)); }
+  #gallery-controls { width: max-content; max-width: var(--ui-available-width); grid-template-columns: var(--ui-control-size) minmax(10rem, 18rem) var(--ui-control-size) auto auto; gap: var(--ui-gap); padding: var(--ui-padding); }
+}
+
+@media (max-width: 700px) {
+  :root { --ui-edge: clamp(.75rem, 2.8vw, 1.25rem); --ui-padding: clamp(.625rem, .45rem + .7vw, 1rem); }
+  #app { --toolbar-height: max(68px, 4.25rem); --toolbar-bottom: calc(max(48px, 3rem) + var(--safe-bottom)); --friends-bottom: calc(var(--toolbar-bottom) + var(--toolbar-height) + .625rem); --walking-bottom: calc(var(--friends-bottom) + max(56px, 3.5rem) + .75rem); }
+  .topbar { gap: .5rem; top: calc(.625rem + var(--safe-top)); left: calc(var(--ui-edge) + var(--safe-left)); right: calc(var(--ui-edge) + var(--safe-right)); }
+  .brand { flex: 1 1 0; gap: .375rem; }
+  .brand > span:last-child { min-width: 0; }
+  .brand strong { font-size: var(--ui-font-label); overflow-wrap: anywhere; }
+  .brand small { font-size: var(--ui-font-micro); letter-spacing: .04em; }
+  .brand-icon { width: 2.25rem; height: 2.25rem; }
+  #hud-toggle { max-width: 4.5rem; padding-inline: .375rem; }
+  .places { top: calc(4.125rem + var(--safe-top)); left: calc(var(--ui-edge) + var(--safe-left)); right: calc(var(--ui-edge) + var(--safe-right)); padding: .5rem; gap: .1875rem; }
+  .places .section-label { font-size: var(--ui-font-label); }
+  .place { min-height: max(54px, 3.375rem); }
+  .place b { font-size: var(--ui-font-label); white-space: normal; line-height: 1.4; }
+  #experience-settings, #tour-progress { top: calc(10.75rem + var(--safe-top)); width: var(--ui-peek-width); padding: .5rem; }
+  #experience-settings { left: calc(var(--ui-edge) + var(--safe-left)); }
+  #tour-progress { right: calc(var(--ui-edge) + var(--safe-right)); max-height: max(5.5rem, calc(100dvh - 10.75rem - var(--safe-top) - var(--walking-bottom) - .75rem)); }
+  #tour-progress summary { font-size: var(--ui-font-label); }
+  #tour-count { font-size: var(--ui-font-label); }
+  #tour-progress summary::after { font-size: var(--ui-font-micro); }
+  #tour-progress[open] { max-height: max(6rem, calc(100dvh - 10.75rem - var(--safe-top) - var(--toolbar-bottom) - var(--toolbar-height) - .75rem)); }
+  #experience-settings[open] { top: calc(4.125rem + var(--safe-top)); left: calc(var(--ui-edge) + var(--safe-left)); right: calc(var(--ui-edge) + var(--safe-right)); bottom: auto; width: auto; max-width: min(28rem, var(--ui-available-width)); max-height: max(6rem, calc(100dvh - 4.125rem - var(--safe-top) - var(--toolbar-bottom) - var(--toolbar-height) - .625rem)); }
+  .toolbar { left: calc(var(--ui-edge) + var(--safe-left)); right: calc(var(--ui-edge) + var(--safe-right)); padding: .375rem; gap: .125rem; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; }
+  .toolbar button, .toolbar .primary, .toolbar #reset { min-width: 44px; min-height: var(--ui-control-size); height: auto; padding: .25rem .125rem; }
+  .toolbar button span, .toolbar button b { font-size: var(--ui-font-label); line-height: 1.4; }
+  .toolbar #play-icon { font-size: 1rem; }
+  .companions { max-width: var(--ui-available-width); }
+  .friend { padding: .375rem .4375rem; gap: .25rem; }
+  .friend b { font-size: var(--ui-font-label); white-space: normal; }
+  .avatar { width: 1.625rem; height: 1.625rem; }
+  .walk-mode { right: calc(var(--ui-edge) + var(--safe-right)); width: calc(var(--ui-available-width) - var(--ui-joystick-size) - var(--ui-gap)); max-width: 22rem; padding: .25rem; gap: .1875rem; }
+  .walk-mode button { min-width: 44px; font-size: var(--ui-font-label); line-height: 1.5; padding: .375rem .1875rem; }
+  #joystick { left: calc(var(--ui-edge) + var(--safe-left)); bottom: calc(var(--walking-bottom) + 1rem); }
+  #story-card { top: calc(4.125rem + var(--safe-top)); bottom: auto; left: calc(var(--ui-edge) + var(--safe-left)); right: calc(var(--ui-edge) + var(--safe-right)); max-height: max(6rem, calc(100dvh - 4.125rem - var(--safe-top) - var(--friends-bottom) - 4.125rem)); }
+  #story-card h2 { font-size: var(--ui-font-heading); }
+  #story-card > .eyebrow { font-size: var(--ui-font-micro); }
+  #speech-details { font-size: var(--ui-font-label); }
+  .hotspot { font-size: var(--ui-font-label); }
+  footer { left: calc(var(--ui-edge) + var(--safe-left)); right: calc(var(--ui-edge) + var(--safe-right)); }
+  footer button { font-size: var(--ui-font-micro); }
+  #gallery-controls { left: calc(var(--ui-edge) + var(--safe-left)); right: calc(var(--ui-edge) + var(--safe-right)); bottom: var(--toolbar-bottom); }
+  body[data-compact="true"] #experience-settings, body[data-compact="true"] #tour-progress { top: calc(4.125rem + var(--safe-top)); }
+  body[data-compact="true"] #character-speech { width: var(--ui-speech-width); max-width: var(--ui-available-width); }
+  body[data-gallery="true"] #experience-settings[open] { bottom: auto; max-height: max(6rem, calc(100dvh - var(--safe-top) - var(--safe-bottom) - 18rem)); }
+}
+@media (max-width: 480px) {
+  #app { --toolbar-height: max(112px, 7rem); }
+  .toolbar { grid-template-rows: repeat(2, minmax(var(--ui-control-size), max-content)); gap: .25rem; }
+  .toolbar button, .toolbar .primary, .toolbar #reset { min-width: 44px; }
+  .guide-choices b { font-size: var(--ui-font-label); }
+  .guide-choices small { font-size: var(--ui-font-micro); }
+  .welcome-card h2 { font-size: var(--ui-font-display); }
+}
+/* Unfolded and near-square tablets keep readable panels rather than phone-sized text. */
+@media (min-width: 701px) and (max-width: 1100px) and (min-height: 501px) {
+  .intro { max-width: 15rem; }
+  .intro h1 { font-size: clamp(1.75rem, 3vw, 2.25rem); }
+  .toolbar { display: grid; grid-template-columns: repeat(8, minmax(44px, 1fr)); width: var(--ui-available-width); }
+  .toolbar .divider { display: none; }
+  .toolbar button, .toolbar .primary, .toolbar #reset { flex-direction: column; min-width: 44px; padding: .375rem .25rem; white-space: normal; }
+  .toolbar button span, .toolbar button b { font-size: var(--ui-font-label); }
+  #experience-settings { right: calc(var(--safe-right) + var(--ui-edge) + 8rem); width: min(11rem, 24vw); }
+  #story-card { left: calc(var(--safe-left) + var(--ui-edge)); right: calc(var(--safe-right) + var(--ui-edge)); width: auto; max-width: 30rem; margin-inline: auto; }
+  #joystick { left: calc(var(--safe-left) + var(--ui-edge)); bottom: calc(var(--safe-bottom) + 23rem); }
+}
+/* Very narrow Fold covers retain every action with internal scrolling, not shrinking targets. */
+@media (max-width: 319px) {
+  .brand-icon { display: none; }
+  .walk-mode { width: calc(var(--ui-available-width) - var(--ui-joystick-size) - .375rem); display: grid; grid-template-columns: repeat(2, minmax(44px, 1fr)); max-height: 8rem; overflow-y: auto; }
+  .walk-mode #school-tour { grid-column: 1 / -1; }
+  .toolbar { padding-inline: .25rem; }
+}
+/* Short landscape uses width for controls and scroll height for reading. */
+@media (max-height: 500px) and (orientation: landscape) {
+  :root { --ui-edge: clamp(.75rem, 1.6vw, 1.5rem); --ui-padding: .625rem; }
+  #app { --toolbar-height: max(64px, 4rem); --toolbar-bottom: calc(.5rem + var(--safe-bottom)); --friends-bottom: calc(var(--toolbar-bottom) + var(--toolbar-height) + .5rem); }
+  .topbar { top: calc(.375rem + var(--safe-top)); }
+  .brand strong { font-size: var(--ui-font-label); }
+  .places { top: calc(3.625rem + var(--safe-top)); width: min(10rem, 23vw); padding: .375rem; }
+  .place b { font-size: var(--ui-font-label); }
+  #tour-progress { top: calc(3.625rem + var(--safe-top)); right: calc(var(--safe-right) + var(--ui-edge) + min(10rem, 23vw) + .625rem); width: min(8.75rem, 20vw); max-height: max(3rem, calc(100dvh - 3.625rem - var(--safe-top) - var(--friends-bottom) - 4rem)); }
+  #experience-settings { top: calc(3.625rem + var(--safe-top)); left: calc(var(--safe-left) + var(--ui-edge) + var(--ui-joystick-size) + .625rem); right: auto; bottom: auto; width: min(8.25rem, 21vw); padding: .375rem; }
+  #experience-settings[open] { top: calc(3.625rem + var(--safe-top)); left: calc(var(--safe-left) + var(--ui-edge)); right: calc(var(--safe-right) + var(--ui-edge)); bottom: auto; width: auto; max-width: min(32rem, var(--ui-available-width)); max-height: max(5rem, calc(100dvh - 3.625rem - var(--safe-top) - var(--toolbar-bottom) - var(--toolbar-height) - .5rem)); }
+  .toolbar { display: flex; height: var(--toolbar-height); gap: .25rem; padding: .3125rem; overflow: auto; }
+  .toolbar button, .toolbar .primary, .toolbar #reset { min-height: var(--ui-control-size); min-width: 44px; flex: 1 0 44px; padding: .25rem; }
+  .toolbar button span, .toolbar button b { font-size: var(--ui-font-label); white-space: normal; }
+  .companions { max-width: min(24rem, calc(var(--ui-available-width) / 2 - .375rem)); padding: .3125rem; }
+  .friend { padding: .25rem; }
+  .friend b { font-size: var(--ui-font-label); }
+  .walk-mode { width: calc(var(--ui-available-width) / 2 - .375rem); max-width: 24rem; gap: .25rem; padding: .3125rem; }
+  .walk-mode button { min-width: 44px; font-size: var(--ui-font-label); white-space: normal; padding: .25rem; }
+  #joystick { left: calc(var(--safe-left) + var(--ui-edge)); bottom: calc(var(--friends-bottom) + 4.375rem); }
+  #story-card { top: calc(3.625rem + var(--safe-top)); bottom: auto; left: calc(var(--safe-left) + var(--ui-edge)); right: calc(var(--safe-right) + var(--ui-edge)); width: auto; max-height: max(5rem, calc(100dvh - 3.625rem - var(--safe-top) - var(--friends-bottom) - 4rem)); }
+  #story-card h2 { font-size: var(--ui-font-heading); }
+  #gallery-controls { max-height: 50dvh; bottom: calc(.5rem + var(--safe-bottom)); }
+  footer button { font-size: var(--ui-font-micro); max-width: min(17rem, 35vw); white-space: normal; }
+  body[data-compact="true"] #experience-settings, body[data-compact="true"] #tour-progress { top: calc(3.625rem + var(--safe-top)); }
+  body[data-gallery="true"] #experience-settings[open] { bottom: auto; max-height: max(5rem, calc(100dvh - var(--safe-top) - var(--safe-bottom) - 10rem)); }
+}
+
+/* Long labels and larger user fonts may wrap, but controls never become tiny. */
+@media (max-width: 700px) {
+  .brand strong { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+  .brand small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .friend-buttons { min-width: 0; }
+  .friend { flex: 1 1 0; }
+  .avatar { width: 26px; height: 26px; font-size: .625rem; }
+  .companions { max-height: min(30dvh, 10rem); overflow-y: auto; overscroll-behavior: contain; }
+  .walk-mode { flex-wrap: wrap; max-height: min(28dvh, 12rem); overflow-y: auto; overscroll-behavior: contain; }
+  .walk-mode button { flex: 1 1 44px; }
+}
+@media (max-width: 360px) {
+  .brand-icon, .brand small, .friend .avatar { display: none; }
+}
+@media (min-width: 701px) and (min-height: 501px) {
+  .companions { max-height: max(7rem, calc(100dvh - 21rem)); }
+}
+/* At high text zoom or unusually short/narrow windows, reflow the HUD into a
+   scrollable document. rem media thresholds follow the browser's font setting. */
+@media (max-width: 24rem) and (max-height: 32rem) and (orientation: portrait) {
+  #app { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: var(--ui-gap); overflow-y: auto; overscroll-behavior: contain; padding: calc(var(--ui-edge) + var(--safe-top)) calc(var(--ui-edge) + var(--safe-right)) calc(var(--ui-edge) + var(--safe-bottom)) calc(var(--ui-edge) + var(--safe-left)); }
+  #scene, #hotspots { position: fixed; inset: 0; }
+  .topbar, .companions, .places, #tour-progress, #experience-settings,
+  #experience-settings[open], .walk-mode, .toolbar, footer, #gallery-controls {
+    position: relative; inset: auto; transform: none; width: 100%; max-width: none; grid-column: 1; margin: 0;
+  }
+  .topbar { order: 1; }
+  .places { order: 2; }
+  #tour-progress { order: 3; max-height: min(50dvh, 18rem); }
+  #experience-settings { order: 4; max-height: min(60dvh, 24rem); }
+  .companions { order: 5; max-height: min(40dvh, 14rem); }
+  .walk-mode { order: 6; max-height: min(40dvh, 14rem); }
+  #joystick { position: relative; inset: auto; order: 7; margin: .5rem 0 1.5rem; }
+  .toolbar { order: 8; height: auto; max-height: 60dvh; }
+  footer { order: 9; }
+  #gallery-controls { order: 8; max-height: 65dvh; }
+  #story-card { position: fixed; top: calc(var(--ui-edge) + var(--safe-top)); bottom: auto; max-height: calc(100dvh - var(--ui-edge) * 2 - var(--safe-top) - var(--safe-bottom)); }
+  body[data-compact="true"] #experience-settings, body[data-compact="true"] #tour-progress,
+  body[data-gallery="true"] #experience-settings, body[data-gallery="true"] #experience-settings[open] { top: auto; bottom: auto; max-height: min(60dvh, 24rem); }
+}
+#experience-settings label, #experience-settings summary, #experience-settings > button, #environment-status {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
