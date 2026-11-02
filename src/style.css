@@ -880,3 +880,15 @@ body[data-interior="true"] #toast{bottom:280px}
  #interact{bottom:280px;left:auto;right:12px;transform:none;max-width:calc(100vw - 124px)}
  body[data-interior="true"] #toast{bottom:350px;max-width:calc(100vw - 28px)}
 }
+
+/* Interior feedback remains opaque; fading text over the character is unreadable. */
+body[data-interior="true"] #toast{background:#183e32;color:#fff;border:1px solid #fff;transition:none;box-shadow:0 4px 18px #0004}
+body[data-interior="true"] #toast:not(.show){visibility:hidden;opacity:0}
+body[data-interior="true"] #toast.show{visibility:visible;opacity:1}
+body[data-interior="true"] #interact{background:#183e32;color:#fff;border:1px solid #fff}
+
+@media(max-width:700px){
+ body[data-interior="true"] #toast,body[data-interior="true"] #toast.show{top:214px;bottom:auto;left:12px;right:12px;width:auto;max-width:none;transform:none}
+}
+
+body[data-interior="true"] #experience-settings small:not(#environment-status){display:none}

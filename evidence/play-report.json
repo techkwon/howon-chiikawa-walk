@@ -31,7 +31,7 @@
       "active": true,
       "suspended": false,
       "playingMusic": false,
-      "activeVoices": 1
+      "activeVoices": 0
     },
     "speech": {
       "active": true,
@@ -56,11 +56,12 @@
       "library": 1
     },
     "camera": {
-      "fov": 65,
+      "fov": 88,
       "followDistance": 7,
+      "interiorCameraDistance": 4.76366455578056,
       "position": [
-        2.8,
-        2.0700000000000003,
+        4.3,
+        2.92,
         1.9999999999999998
       ]
     },
@@ -83,28 +84,28 @@
       },
       {
         "name": "Hachiware",
-        "x": 30.056884827072096,
+        "x": 30.28818725929003,
         "y": 0.25,
-        "z": 21.37395027519369,
+        "z": 23.189283881572432,
         "walking": false,
         "height": 1.4128065277994661,
-        "heading": 0.6511081784006872,
+        "heading": -0.5777779911780697,
         "inBuilding": false
       },
       {
         "name": "Usagi",
-        "x": 33,
+        "x": 33.53999999999998,
         "y": 0.25,
         "z": 20,
         "walking": false,
         "height": 1.626209186967053,
-        "heading": 0,
+        "heading": 1.056467454583266,
         "inBuilding": false
       }
     ],
     "fps": 60,
     "pixelRatio": 1,
-    "drawCalls": 49,
-    "triangles": 9084
+    "drawCalls": 69,
+    "triangles": 9314
   }
 }

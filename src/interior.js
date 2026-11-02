@@ -16,7 +16,7 @@ export function createInterior(){
  const group=new THREE.Group();group.visible=false;group.name='Photo-inspired interior reconstruction';
  const boxes=[],cameraWalls=[],doors={},actions={board:false,book:false},materials=new Map();
  const mat=c=>{if(!materials.has(c))materials.set(c,new THREE.MeshStandardMaterial({color:c,roughness:.86}));return materials.get(c);};
- function box(x,y,z,w,h,d,c,solid=false){const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));mesh.position.set(x,y,z);mesh.receiveShadow=true;group.add(mesh);if(solid){boxes.push({x1:x-w/2,x2:x+w/2,z1:z-d/2,z2:z+d/2});cameraWalls.push(mesh);}return mesh;}
+ function box(x,y,z,w,h,d,c,solid=false){const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));mesh.position.set(x,y,z);mesh.receiveShadow=true;group.add(mesh);if(solid){boxes.push({x1:x-w/2,x2:x+w/2,z1:z-d/2,z2:z+d/2});}if(solid||y+h/2>2.2)cameraWalls.push(mesh);return mesh;}
  function label(text,x,y,z,w=2){const c=document.createElement('canvas');c.width=640;c.height=160;const ctx=c.getContext('2d');ctx.fillStyle='#f8f6eb';ctx.fillRect(0,0,640,160);ctx.fillStyle='#254d45';ctx.textAlign='center';ctx.font='bold 48px sans-serif';ctx.fillText(text,320,98);const texture=new THREE.CanvasTexture(c);texture.colorSpace=THREE.SRGBColorSpace;const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,w/4),new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide}));mesh.position.set(x,y,z);group.add(mesh);return mesh;}
  // Floor tiles: muted green/cream checker corridor, grey classroom and library.
  const tiles=new Map();
@@ -35,7 +35,7 @@ export function createInterior(){
    box(center,2.82,0,1.6,.8,.12,'#cbd7d2');box(center,2.3,0,1.8,.12,.22,'#f1e9d2');
    for(let dx=-4;dx<=4;dx+=1){if(Math.abs(dx)<1)continue;box(center+dx,2.45,.1,.06,1.1,.1,'#fff2d9');}
    const id=center<0?'classroom':'library',leaf=box(center,1.12,0,1.6,2.24,.12,'#e0d5b8');
-   doors[id]={leaf,open:false,amount:0,x:center};cameraWalls.push(leaf);label(center<0?'교실':'혜윰도서관',center,2.85,.18,1.7);
+   doors[id]={leaf,open:false,amount:0,x:center};label(center<0?'교실':'혜윰도서관',center,2.85,.18,1.7);
  }
  label('밖으로 →',0,1.7,3.88,2).rotation.y=Math.PI;label('사진을 따라 걷는 실내 산책',0,2.65,3.87,4).rotation.y=Math.PI;
  // Cream frames, window glass and curtains observed in official classroom photos.
