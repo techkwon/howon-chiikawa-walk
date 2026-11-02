@@ -125,16 +125,23 @@ export function createCharacter(kind = 'chiikawa') {
 }
 
 /** Animates only the internal rig; never overwrites the caller's world transform. */
-export function animateCharacter(group, { time = 0, walking = false, speed = 1, mood = 'happy' } = {}) {
+export function animateCharacter(group, { time = 0, walking = false, speed = 1, mood = 'happy', dt = 1/60, distance, reducedMotion = false } = {}) {
   const data = group.userData.character; if (!data) return;
   const t = Number.isFinite(time) ? time : 0;
-  const moving = !!walking; const phase = t * (7.5 + Math.min(Math.abs(speed), 5)*1.1);
-  const stride = moving ? Math.sin(phase) : 0;
-  data.rig.position.y = moving ? Math.abs(Math.sin(phase))*.055 : Math.sin(t*2.3)*.012;
-  data.rig.rotation.z = moving ? Math.sin(phase)*.025 : Math.sin(t*1.2)*.009;
+  const moving = !!walking;
+  data.walkBlend ??= 0; data.gaitPhase ??= 0;
+  const blend = 1-Math.exp(-Math.min(.05,Math.max(0,dt))*12);
+  data.walkBlend += ((moving?1:0)-data.walkBlend)*blend;
+  if(Number.isFinite(distance))data.gaitPhase += Math.max(0,distance)*Math.PI*2/.85;
+  const phase = Number.isFinite(distance) ? data.gaitPhase : t * (7.5 + Math.min(Math.abs(speed), 5)*1.1);
+  const stride = Math.sin(phase)*data.walkBlend;
+  const motion = reducedMotion ? 0 : 1;
+  data.rig.position.y = motion*(Math.abs(stride)*.035 + (1-data.walkBlend)*Math.sin(t*2.3)*.008);
+  data.rig.rotation.z = motion*(stride*.018+(1-data.walkBlend)*Math.sin(t*1.2)*.006);
   data.legs[0].rotation.x = stride*.44; data.legs[1].rotation.x = -stride*.44;
-  data.arms.forEach((arm,i)=> { const side=i===0?-1:1; arm.rotation.x = stride*side*.36; arm.rotation.z=side*.16+(mood==='excited'?side*(.5+Math.sin(t*8)*.18):0); if(mood==='greet' && i===1) arm.rotation.z=2.4+Math.sin(t*7)*.22; });
+  data.arms.forEach((arm,i)=> { const side=i===0?-1:1; arm.rotation.x = stride*side*.36; arm.rotation.z=side*.16+(mood==='excited'?side*(.5+Math.sin(t*8)*.18):0); if(!reducedMotion && mood==='greet' && i===1) arm.rotation.z=2.4+Math.sin(t*7)*.22; });
   data.ears.forEach((ear,i)=> { ear.rotation.z=data.earRest[i]+Math.sin((moving?phase:t*2.1)+i)* (moving?.055:.018); ear.rotation.x=moving?Math.sin(phase+.7)*.045:0; });
   data.head.rotation.y = moving ? Math.sin(phase*.5)*.025 : Math.sin(t*.65)*(mood==='look'?.22:.045);
-  data.tail.rotation.z = Math.sin(t*(moving?7:2))*.12;
+  data.tail.rotation.z = motion*Math.sin(t*(moving?7:2))*.12;
+  if(reducedMotion){data.head.rotation.y=0;data.ears.forEach((ear,i)=>{ear.rotation.x=0;ear.rotation.z=data.earRest[i];});}
 }

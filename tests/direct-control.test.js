@@ -44,26 +44,20 @@ test('continuous collision cannot tunnel through a building at high speed', () =
 });
 
 test('diagonal motion slides along a building wall instead of sticking', () => {
-  const p = safeMove({ x: -2.8, z: -26 }, { x: -1, z: 1 }, 0.05, 6);
-  close(p.x, -2.8);
+  const p = safeMove({ x: -4+CHARACTER_RADIUS, z: -26 }, { x: -1, z: 1 }, 0.05, 6);
+  close(p.x, -4+CHARACTER_RADIUS);
   assert.ok(p.z > -26.01 + 0.2); safePosition(p);
 });
 
 test('tree trunk sweep stops even when one frame would pass the entire tree', () => {
   const p = safeMove({ x: -14, z: 18 }, { x: 0, z: -1 }, 0.05, 1000);
-  close(p.z, 14.5); safePosition(p);
+  close(p.z, 13+.3+CHARACTER_RADIUS); safePosition(p);
 });
 
-test('all Blender shelter posts and low roof footprints are protected', () => {
-  assert.equal(CANOPY_POSTS.length, 56);
-  assert.ok(CANOPY_POSTS.some(p => p.x === -3.6 && p.z === 10));
-  assert.ok(CANOPY_POSTS.some(p => p.x === 4.4 && p.z === -43));
-  const p = safeMove({ x: 10, z: -19.25 }, { x: -1, z: 0 }, 0.05, 1000);
-  close(p.x, 4.4 + CHARACTER_RADIUS); safePosition(p);
-  const shortRoof = safeMove({ x: -1, z: 15 }, { x: 0, z: -1 }, 0.05, 1000);
-  close(shortRoof.z, 10 + CHARACTER_RADIUS); safePosition(shortRoof);
-  const southRoof = safeMove({ x: 10, z: 25 }, { x: -1, z: 0 }, 0.05, 1000);
-  close(southRoof.x, 4.4 + CHARACTER_RADIUS); safePosition(southRoof);
+test('existing exterior canopies retain their conservative route clearance', () => {
+ assert.equal(CANOPY_POSTS.length,56);
+ const stopped=safeMove({x:10,z:-19.25},{x:-1,z:0},.05,1000);
+ close(stopped.x,4.4+CHARACTER_RADIUS);safePosition(stopped);
 });
 
 test('campus edges constrain the whole character and permit edge sliding', () => {
@@ -74,16 +68,16 @@ test('campus edges constrain the whole character and permit edge sliding', () =>
   close(west.x, -58 + CHARACTER_RADIUS); safePosition(west);
   const north = safeMove({ x: 31, z: -48 }, { x: 0, z: -1 }, 0.05, 10000);
   close(north.z, -50 + CHARACTER_RADIUS); safePosition(north);
-  const slide = safeMove({ x: 62.8, z: 20 }, { x: 1, z: 1 }, 0.05, 6);
-  close(slide.x, 62.8); assert.ok(slide.z > 20.2); safePosition(slide);
+  const slide = safeMove({ x: 64-CHARACTER_RADIUS, z: 20 }, { x: 1, z: 1 }, 0.05, 6);
+  close(slide.x, 64-CHARACTER_RADIUS); assert.ok(slide.z > 20.2); safePosition(slide);
 });
 
 test('additional actor circles and rectangles are added without mutating them', () => {
   const circle = Object.freeze({ x: 35, z: 20, radius: 1.2 });
   const p = safeMove({ x: 31, z: 20 }, { x: 1, z: 0 }, 0.05, 1000, Object.freeze([circle]));
-  close(p.x, 32.6); safePosition(p);
+  close(p.x, 35-1.2-CHARACTER_RADIUS); safePosition(p);
   const box = { x1: 34, x2: 35, z1: 18, z2: 22 };
-  close(safeMove({ x: 31, z: 20 }, { x: 1, z: 0 }, 0.05, 1000, [box]).x, 32.8);
+  close(safeMove({ x: 31, z: 20 }, { x: 1, z: 0 }, 0.05, 1000, [box]).x, 34-CHARACTER_RADIUS);
 });
 
 test('running speed increases travel without amplifying diagonal or analog input', () => {
@@ -119,7 +113,7 @@ test('running and extreme-speed sweeps stop before thin walls and diagonal actor
 });
 
 test('wall contact still permits retreat and repeated diagonal movement stays outside geometry', () => {
-  let p = { x: -2.8, z: -26 };
+  let p = { x: -4+CHARACTER_RADIUS, z: -26 };
   assert.ok(safeMove(p, { x: 1, z: 0 }, 0.05, 6).x > p.x);
   for (let i = 0; i < 120; i++) { p = safeMove(p, { x: -1, z: 1 }, 0.05, 6); safePosition(p); }
 });

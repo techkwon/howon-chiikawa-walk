@@ -1,0 +1,110 @@
+{
+  "result": "passed",
+  "checks": [
+    "desktop browser keyboard path through classroom and library",
+    "both doors open on proximity",
+    "board and book repeated interactions",
+    "solid wall collision and camera bounds",
+    "exit and reenter via button and E",
+    "existing story and minigame opens after round trip",
+    "390x844 pointer joystick moves actor",
+    "mobile exit and reenter",
+    "reduced-motion media"
+  ],
+  "errors": [],
+  "state": {
+    "loaded": true,
+    "paused": false,
+    "speed": 1,
+    "gallery": false,
+    "environment": {
+      "season": "autumn",
+      "phase": "day"
+    },
+    "audio": {
+      "supported": true,
+      "unlocked": true,
+      "music": false,
+      "sound": true,
+      "volume": 0.35,
+      "destroyed": false,
+      "active": true,
+      "suspended": false,
+      "playingMusic": false,
+      "activeVoices": 1
+    },
+    "speech": {
+      "active": true,
+      "visible": false,
+      "speaker": "햄스터"
+    },
+    "tour": {
+      "total": 8,
+      "visited": 1,
+      "read": 0,
+      "completed": 0,
+      "completedIds": [],
+      "done": false
+    },
+    "coins": 0,
+    "manual": true,
+    "follow": true,
+    "interior": true,
+    "interaction": "exit",
+    "doors": {
+      "classroom": 1,
+      "library": 1
+    },
+    "camera": {
+      "fov": 65,
+      "followDistance": 7,
+      "position": [
+        2.8,
+        2.0700000000000003,
+        1.9999999999999998
+      ]
+    },
+    "stopQuiz": {
+      "completed": 0,
+      "current": "welcome"
+    },
+    "selected": 0,
+    "destination": "school",
+    "actors": [
+      {
+        "name": "Chiikawa",
+        "x": 0,
+        "y": 0.02,
+        "z": 2,
+        "walking": false,
+        "height": 1.2959578217705998,
+        "heading": -1.5707963267948966,
+        "inBuilding": false
+      },
+      {
+        "name": "Hachiware",
+        "x": 30.056884827072096,
+        "y": 0.25,
+        "z": 21.37395027519369,
+        "walking": false,
+        "height": 1.4128065277994661,
+        "heading": 0.6511081784006872,
+        "inBuilding": false
+      },
+      {
+        "name": "Usagi",
+        "x": 33,
+        "y": 0.25,
+        "z": 20,
+        "walking": false,
+        "height": 1.626209186967053,
+        "heading": 0,
+        "inBuilding": false
+      }
+    ],
+    "fps": 60,
+    "pixelRatio": 1,
+    "drawCalls": 49,
+    "triangles": 9084
+  }
+}

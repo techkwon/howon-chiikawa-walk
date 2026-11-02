@@ -1,0 +1,14 @@
+
+> howon-chiikawa-walk@1.0.0 build
+> vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 24 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                          17.59 kB │ gzip:   6.17 kB
+dist/assets/guide-friends-BCEeLibr.png  360.73 kB
+dist/assets/index-C4Eem_Ro.css           73.37 kB │ gzip:  14.22 kB
+dist/assets/index-13_iOtM6.js           742.89 kB │ gzip: 203.37 kB
+✓ built in 633ms

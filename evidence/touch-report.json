@@ -1,0 +1,33 @@
+{
+  "result": "passed",
+  "device": "Chrome 390x844 touch emulation (not physical phone)",
+  "checks": [
+    "Usagi selection",
+    "touch entry",
+    "run toggle",
+    "touch joystick drag moves actor",
+    "touch release stops translation",
+    "touch exit and reentry"
+  ],
+  "before": {
+    "name": "Usagi",
+    "x": 0,
+    "y": 0.02,
+    "z": 2,
+    "walking": false,
+    "height": 1.626209186967053,
+    "heading": -1.5707963267948966,
+    "inBuilding": false
+  },
+  "after": {
+    "name": "Usagi",
+    "x": -2.886240239509761,
+    "y": 0.02,
+    "z": 2,
+    "walking": true,
+    "height": 1.626209186967053,
+    "heading": -1.5707963267948966,
+    "inBuilding": false
+  },
+  "errors": []
+}

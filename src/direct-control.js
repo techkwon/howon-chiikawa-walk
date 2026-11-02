@@ -1,6 +1,6 @@
 import { BUILDINGS, TREES } from './navigation.js';
 
-export const CHARACTER_RADIUS = 1.2;
+export const CHARACTER_RADIUS = 0.46;
 export const MAX_MOVE_DT = 0.05;
 export const CAMPUS_BOUNDS = Object.freeze({ x1: -58, x2: 64, z1: -50, z2: 53 });
 const EPSILON = 0.00001;
@@ -18,8 +18,7 @@ export const CANOPY_POSTS = Object.freeze([
   ...shelterPosts(3, 0, 43),
   ...shelterPosts(-1, -10, -4, 5.2),
 ]);
-// The stylized characters are taller than these low roofs at runtime. Reserve
-// their full footprints, rather than letting a character's head cross the roof.
+// Keep exterior guided-route clearance around the existing covered-walkway mesh.
 export const CANOPY_FOOTPRINTS = Object.freeze([
   Object.freeze({ x1: 1.6, x2: 4.4, z1: 14, z2: 47 }),
   Object.freeze({ x1: 1.6, x2: 4.4, z1: -43, z2: 0 }),
@@ -34,7 +33,7 @@ const limits = Object.freeze({
   z1: CAMPUS_BOUNDS.z1 + CHARACTER_RADIUS,
   z2: CAMPUS_BOUNDS.z2 - CHARACTER_RADIUS,
 });
-const clampPosition = p => ({ x: clamp(p.x, limits.x1, limits.x2), z: clamp(p.z, limits.z1, limits.z2) });
+const clampPosition = (p, limits) => ({ x: clamp(p.x, limits.x1, limits.x2), z: clamp(p.z, limits.z1, limits.z2) });
 const inflateBox = b => ({
   x1: b.x1 - CHARACTER_RADIUS, x2: b.x2 + CHARACTER_RADIUS,
   z1: b.z1 - CHARACTER_RADIUS, z2: b.z2 + CHARACTER_RADIUS,
@@ -45,8 +44,8 @@ const campusCircles = [
   ...CANOPY_POSTS.map(p => ({ ...p, radius: p.radius + CHARACTER_RADIUS })),
 ];
 
-function colliders(obstacles) {
-  const boxes = [...campusBoxes], circles = [...campusCircles];
+function colliders(obstacles, world) {
+  const boxes = world ? world.boxes.map(inflateBox) : [...campusBoxes], circles = world ? [] : [...campusCircles];
   for (const obstacle of Array.isArray(obstacles) ? obstacles : []) {
     if (!obstacle) continue;
     if (['x1', 'x2', 'z1', 'z2'].every(k => Number.isFinite(obstacle[k]))) {
@@ -59,8 +58,8 @@ function colliders(obstacles) {
 }
 
 // Recover gracefully if a newly selected actor starts just inside a collider.
-function resolveOverlap(position, boxes, circles) {
-  let p = clampPosition(position);
+function resolveOverlap(position, boxes, circles, limits) {
+  let p = clampPosition(position, limits);
   for (let pass = 0; pass < 12; pass++) {
     let changed = false;
     for (const b of boxes) {
@@ -83,7 +82,7 @@ function resolveOverlap(position, boxes, circles) {
         changed = true;
       }
     }
-    p = clampPosition(p);
+    p = clampPosition(p, limits);
     if (!changed) break;
   }
   return p;
@@ -131,7 +130,7 @@ function sweepCircle(p, d, c) {
   return { t, normal };
 }
 
-function firstCollision(p, d, boxes, circles) {
+function firstCollision(p, d, boxes, circles, limits) {
   let hit = null;
   const consider = candidate => {
     if (candidate && candidate.t >= 0 && candidate.t <= 1 && (!hit || candidate.t < hit.t)) hit = candidate;
@@ -147,15 +146,16 @@ function firstCollision(p, d, boxes, circles) {
 }
 
 /**
- * Move a character in world X/Z, sweeping its 1.2-unit footprint against campus
+ * Move a character in world X/Z, sweeping its 0.46-unit footprint against campus
  * geometry. Additional obstacles are circles {x,z,radius} or boxes {x1,x2,z1,z2}.
  * Diagonal input is capped at unit length; analog magnitudes below 1 are kept.
  * dt is in seconds and capped at 50 ms to avoid jumps after suspended frames.
  * Inputs are never mutated. Sliding is continuous, so thin posts cannot tunnel.
  */
-export function safeMove(position, vector, dt, speed, obstacles = []) {
-  const { boxes, circles } = colliders(obstacles);
-  let p = resolveOverlap({ x: finite(position?.x, 31), z: finite(position?.z, 20) }, boxes, circles);
+export function safeMove(position, vector, dt, speed, obstacles = [], world = null) {
+  const { boxes, circles } = colliders(obstacles, world);
+  const movementLimits = world ? {x1:world.bounds.x1+CHARACTER_RADIUS,x2:world.bounds.x2-CHARACTER_RADIUS,z1:world.bounds.z1+CHARACTER_RADIUS,z2:world.bounds.z2-CHARACTER_RADIUS} : limits;
+  let p = resolveOverlap({ x: finite(position?.x, 31), z: finite(position?.z, 20) }, boxes, circles, movementLimits);
   let x = finite(vector?.x), z = finite(vector?.z);
   const magnitude = Math.hypot(x, z);
   if (magnitude > 1) { x /= magnitude; z /= magnitude; }
@@ -163,7 +163,7 @@ export function safeMove(position, vector, dt, speed, obstacles = []) {
   const distance = Math.min(1e6, Math.max(0, finite(speed)) * elapsed);
   let d = { x: x * distance, z: z * distance };
   for (let pass = 0; pass < 8 && Math.hypot(d.x, d.z) > EPSILON; pass++) {
-    const hit = firstCollision(p, d, boxes, circles);
+    const hit = firstCollision(p, d, boxes, circles, movementLimits);
     if (!hit) { p = { x: p.x + d.x, z: p.z + d.z }; break; }
     const length = Math.hypot(d.x, d.z);
     const travel = Math.max(0, hit.t - EPSILON / length);
@@ -173,7 +173,7 @@ export function safeMove(position, vector, dt, speed, obstacles = []) {
     d.x -= intoWall * hit.normal.x;
     d.z -= intoWall * hit.normal.z;
   }
-  return clampPosition(p);
+  return clampPosition(p, movementLimits);
 }
 
 const KEY_VECTORS = {

@@ -92,7 +92,7 @@ export function createHarness(stageModule, selected = 0) {
   }));
   const input = movement.createInputController({ element: $('#joystick') });
   const playedSounds = [];
-  const context = vm.createContext({
+  const context = vm.createContext({interiorActive:false,reducedMotion:false,
     THREE, ...navigation, ...movement, ...cameraFollow, ...arrivals, ...tours, ...guides, ...coinModule, ...stageModule,
     SCHOOL_STORIES, actors, $, $$, document, window, input,
     loaded: true, started: false, paused: true, manual: false, selected, follow: true, speed: 1, time: 0,
