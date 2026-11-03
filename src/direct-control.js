@@ -267,7 +267,11 @@ export function createInputController({ element } = {}) {
   listen(element, 'pointerdown', event => {
     // A touch on the run button can be the primary pointer. The first pointer
     // that actually reaches this joystick owns it, even if it is non-primary.
-    if (pointerId !== null || (event.button !== undefined && event.button !== 0) || blocked(event.target)) return;
+    if (pointerId !== null || (event.button !== undefined && event.button !== 0) || doc?.hidden || editable(event.target) || doc?.querySelector?.('dialog[open]')) return;
+    // A deliberate joystick gesture returns control from a focused settings field.
+    // Keyboard input remains blocked while editing; modal dialogs still own focus.
+    element.focus?.({ preventScroll: true });
+    if (blocked(event.target)) return;
     event.preventDefault();
     event.stopPropagation();
     pointerId = event.pointerId;

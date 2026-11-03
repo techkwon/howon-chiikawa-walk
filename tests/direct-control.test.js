@@ -375,3 +375,15 @@ test('blur, focus changes and lost capture clear input and destroy removes liste
   assert.deepEqual(controller.getVector(), { x: 0, z: 0 });
   assert.equal(knob.style.transform, '');
 });
+
+test('deliberate joystick touch reclaims focus from settings but never a modal', () => {
+ const {doc,element,controller,fire}=inputFixture();
+ element.focus=()=>{doc.activeElement=element;};
+ doc.activeElement={tagName:'INPUT'};
+ fire(element,'pointerdown',{pointerId:7,clientX:60,clientY:22,button:0});
+ assert.equal(doc.activeElement,element);assert.ok(controller.getVector().z<-.5);
+ fire(element,'pointerup',{pointerId:7});controller.reset();
+ const field={tagName:'SELECT'};doc.activeElement=field;doc.modal={};
+ fire(element,'pointerdown',{pointerId:8,clientX:60,clientY:22,button:0});
+ assert.equal(doc.activeElement,field);assert.deepEqual(controller.getVector(),{x:0,z:0});
+});
