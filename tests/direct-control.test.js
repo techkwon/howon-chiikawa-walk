@@ -404,3 +404,15 @@ test('deliberate joystick touch reclaims focus from settings but never a modal',
  fire(element,'pointerdown',{pointerId:8,clientX:60,clientY:22,button:0});
  assert.equal(doc.activeElement,field);assert.deepEqual(controller.getVector(),{x:0,z:0});
 });
+
+for (const tagName of ['BUTTON','A','SUMMARY']) test(`focused ${tagName} keeps movement shortcuts for UI and releases held input`,()=>{
+ const {win,doc,controller,fire}=inputFixture();
+ fire(win,'keydown',{code:'KeyW'});fire(win,'keydown',{code:'ShiftLeft'});
+ const target={tagName,closest:()=>null};doc.activeElement=target;fire(doc,'focusin',{target});
+ assert.deepEqual(controller.getVector(),{x:0,z:0});assert.equal(controller.isRunning(),false);
+ for(const code of ['KeyW','ArrowUp','ShiftLeft'])assert.equal(fire(win,'keydown',{code,target}).defaultPrevented,false);
+ assert.deepEqual(controller.getVector(),{x:0,z:0});assert.equal(controller.isRunning(),false);
+ doc.activeElement={tagName:'CANVAS',closest:()=>null};
+ assert.equal(fire(win,'keydown',{code:'KeyW',target:doc.activeElement}).defaultPrevented,true);
+ assert.deepEqual(controller.getVector(),{x:0,z:-1});controller.destroy();
+});

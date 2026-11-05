@@ -205,6 +205,10 @@ function editable(target) {
   return Boolean(target && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName || '') || target.closest?.('[contenteditable]:not([contenteditable="false"]), dialog, [role="dialog"]')));
 }
 
+function keyboardControl(target) {
+  return Boolean(target && (/^(BUTTON|A|SUMMARY)$/.test(target.tagName || '') || target.closest?.('button, a[href], summary, [role="button"], [role="link"]')));
+}
+
 /**
  * Keyboard and pointer joystick input. The joystick knob should be CSS-centered.
  * isRunning() is the run intent (held Shift OR the mobile toggle), independent of
@@ -263,7 +267,7 @@ export function createInputController({ element } = {}) {
     const code = inputCode(event);
     const shift = SHIFT_CODES.has(code);
     if ((!KEY_VECTORS[code] && !shift) || event.ctrlKey || event.metaKey || event.altKey) return;
-    if (blocked(event.target)) { reset(); return; }
+    if (blocked(event.target) || keyboardControl(event.target) || keyboardControl(doc?.activeElement)) { reset(); return; }
     // Do not cancel Shift itself: Shift+Tab and ordinary browser focus behavior
     // must keep working. Only movement keys consume their default action.
     if (shift) { heldShifts.add(code); return; }
@@ -277,7 +281,7 @@ export function createInputController({ element } = {}) {
   });
   listen(win, 'blur', reset);
   listen(doc, 'visibilitychange', () => { if (doc.hidden) reset(); });
-  listen(doc, 'focusin', event => { if (blocked(event.target)) reset(); });
+  listen(doc, 'focusin', event => { if (blocked(event.target) || keyboardControl(event.target)) reset(); });
   // Holding the joystick is movement, not a request for the browser's touch menu.
   // Scope this to the joystick so links and other page content retain their menus.
   listen(element, 'contextmenu', event => {

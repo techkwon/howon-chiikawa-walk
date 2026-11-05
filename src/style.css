@@ -980,3 +980,58 @@ body[data-interior="true"] #app:has(#experience-settings[open]) #toast { visibil
   body:not([data-interior="true"]) #app:has(#experience-settings[open], #tour-progress[open]) #interior-entry,
   body:not([data-interior="true"]) #app:has(#experience-settings[open], #tour-progress[open]) #interact { visibility: hidden; pointer-events: none; }
 }
+
+/* Small-screen full menus use document flow instead of overlapping rails. */
+@media (max-width: 700px) {
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) #app { display: grid; grid-template-columns: minmax(0,1fr); align-content: start; gap: 12px; overflow-y: auto; padding: 12px; }
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) #app > :is(.topbar,.places,.companions,#tour-progress,#experience-settings,.walk-mode,.toolbar,footer,#interior-entry,#interact) { position: relative; inset: auto; transform: none; width: 100%; max-width: none; margin: 0; grid-column: 1; }
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) .topbar { order: 1; }
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) .places { order: 2; }
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) #interior-entry { order: 3; }
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) #tour-progress { order: 4; }
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) #experience-settings { order: 5; max-height: 65dvh; }
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) .companions { order: 6; }
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) .walk-mode { order: 7; }
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) #interact { order: 8; }
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) .toolbar { order: 9; height: auto; }
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) footer { order: 10; max-height: none; }
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) #joystick { position: relative; inset: auto; order: 8; }
+}
+@media (max-width: 700px) and (orientation: portrait) {
+ body[data-compact="true"]:not([data-interior="true"]) #experience-settings[open] { max-height: max(8rem,calc(100dvh - 4.125rem - var(--safe-top) - var(--walking-bottom) - var(--ui-gap))); }
+ body:not([data-interior="true"]) #app:has(#experience-settings[open]) :is(.walk-mode,#joystick,.places,.companions) { visibility: hidden; pointer-events: none; }
+}
+@media (min-width: 701px) and (min-height: 501px) {
+ body[data-compact="false"]:not([data-interior="true"]) .intro { top: 200px; }
+}
+/* Meaningful secondary text stays readable on the cream panels. */
+.eyebrow,.place small,.friend small,#friend-status,.section-label>span,.loading-card p,.loading-card small { color: #52634f; }
+footer { color: #445640; background: #fffdf6; border-radius: 12px; padding: 6px 10px; }
+@media (max-width: 700px) {
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) #app { grid-auto-rows: max-content; }
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) #app > :is(#tour-progress,#experience-settings,.companions,.walk-mode,.toolbar) { max-height: none; height: auto; overflow: visible; }
+}
+/* Full mobile menus own the foreground; scene labels must not cover their header. */
+@media (max-width: 700px) {
+ body[data-compact="false"]:not([data-interior="true"]):not([data-gallery="true"]) #hotspots { visibility: hidden; pointer-events: none; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+ body[data-compact="true"]:not([data-interior="true"]):not([data-gallery="true"]) #joystick { top: auto; bottom: calc(80px + var(--safe-bottom)); width: 72px; height: 72px; }
+}
+/* Text over the moving scene needs a stable backdrop, including dark walls. */
+.brand { background: #fffdf6; border-radius: 14px; padding: 4px 8px; }
+.view-label { background: #fffdf6; border-radius: 10px; padding: 6px 10px; text-shadow: none; }
+@media (min-width: 701px) and (min-height: 501px) {
+ body[data-compact="false"]:not([data-interior="true"]) .intro { background: #fffdf6; border-radius: 16px; padding: 12px; max-width: 238px; }
+ body[data-compact="false"]:not([data-interior="true"]) .intro h1 { font-size: 1.875rem; margin: 8px 0; }
+ body[data-compact="false"]:not([data-interior="true"]) .intro p { margin: 8px 0; color: #52634f; }
+ body[data-compact="false"]:not([data-interior="true"]) .weather { margin-top: 10px; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+ body[data-compact="true"]:not([data-interior="true"]):not([data-gallery="true"]) #interact { left: calc(var(--safe-left) + var(--ui-edge) + var(--short-utility-width) + var(--ui-gap)); right: auto; width: var(--short-utility-width); }
+ body[data-compact="true"]:not([data-interior="true"]):not([data-gallery="true"]) .walk-mode { width: var(--short-utility-width); max-width: var(--short-utility-width); }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+ body[data-compact="true"]:not([data-interior="true"]) .joystick-label { display: none; }
+}
+#graphics-reload { min-height: var(--ui-control-size); padding: .75rem 1rem; border-radius: .75rem; background: #3c654d; color: #fffdf6; }

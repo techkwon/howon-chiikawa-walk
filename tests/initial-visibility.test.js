@@ -89,7 +89,7 @@ function computed(target, viewport, state = {}) {
 }
 
 test('every dialog in the initial HTML is closed and cannot start as an open game', () => {
-  assert.deepEqual(dialogs.map(dialog => dialog.id).sort(), ['farewell', 'info', 'restart-confirm', 'stop-quiz-dialog']);
+  assert.deepEqual(dialogs.map(dialog => dialog.id).sort(), ['farewell', 'graphics-error', 'info', 'restart-confirm', 'stop-quiz-dialog']);
   for (const dialog of dialogs) assert.equal(dialog.open, false, `${dialog.id} has an initial open attribute`);
   assert.match(html, /<div id="welcome"(?![^>]*\bhidden\b)/);
   for (const id of ['story-card', 'gallery-controls', 'character-speech', 'run-toggle']) {
