@@ -201,3 +201,29 @@ test('expanded short-landscape settings and progress reserve the full walking-co
     assert.ok(panelBottom + token('--ui-gap', ctx) <= walkTop + .001, `${width}×${height}: expanded panel overlaps walking lane`);
   }
 });
+
+test('desktop progress ends before the reserved dock clearance', () => {
+  for (const [width, height] of [[1200, 830], [1440, 900], [1920, 1080]]) {
+    const ctx = context(width, height);
+    const top = token('--desktop-progress-top', ctx);
+    const clearance = token('--desktop-walking-bottom', ctx);
+    const maxHeight = Math.max(token('--ui-control-size', ctx), height - top - clearance);
+    assert.ok(top + maxHeight <= height - clearance);
+  }
+  for (const id of ['experience-settings', 'tour-progress', 'interior-entry', 'interact', 'joystick']) {
+    assert.ok(css.includes(`#app:has(#story-card:not([hidden])) #${id}`));
+  }
+  assert.ok(css.includes('#app:has(#story-card:not([hidden])) .walk-mode'));
+});
+
+test('portrait disclosures reserve walking space and suppress covered scene actions', () => {
+  for (const [width, height] of [[320, 568], [390, 844]]) {
+    const ctx = context(width, height);
+    // Compact mode reserves footer, two-row toolbar and the walking gap.
+    const walkingBottom = token('--toolbar-bottom', ctx) + token('--toolbar-height', ctx) + .875 * 16;
+    const panelHeight = Math.max(token('--ui-control-size', ctx), height - 4.125 * 16 - walkingBottom - token('--portrait-walk-reserve', ctx) - token('--ui-gap', ctx));
+    assert.ok(4.125 * 16 + panelHeight + token('--ui-gap', ctx) <= height - walkingBottom - token('--portrait-walk-reserve', ctx) + .001);
+  }
+  for (const id of ['interior-entry', 'interact']) assert.ok(css.includes(`#app:has(#experience-settings[open], #tour-progress[open]) #${id}`));
+  assert.ok(css.includes('#app:has(#experience-settings[open]) #tour-progress { visibility: hidden; pointer-events: none; }'));
+});

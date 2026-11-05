@@ -960,3 +960,23 @@ body[data-interior="true"] #app:has(#experience-settings[open]) #toast { visibil
   body[data-compact="true"]:not([data-interior="true"]):not([data-gallery="true"]) .walk-mode { max-height: var(--short-walk-height); }
   body[data-compact="true"]:not([data-interior="true"]):not([data-gallery="true"]) #app:has(#experience-settings[open], #tour-progress[open]) #interact { visibility: hidden; pointer-events: none; }
 }
+/* Reading owns the foreground; closing the story restores the utility panels. */
+#app:has(#story-card:not([hidden])) #experience-settings,
+#app:has(#story-card:not([hidden])) #tour-progress,
+#app:has(#story-card:not([hidden])) #interior-entry,
+#app:has(#story-card:not([hidden])) .walk-mode,
+#app:has(#story-card:not([hidden])) #joystick,
+#app:has(#story-card:not([hidden])) #interact { visibility: hidden !important; pointer-events: none; }
+@media (min-width: 701px) and (min-height: 501px) {
+  #app { --desktop-progress-top: calc(var(--safe-top) + clamp(25rem, 34vh, 31rem)); }
+  #tour-progress, #tour-progress[open] { top: var(--desktop-progress-top); max-height: max(var(--ui-control-size), calc(100dvh - var(--desktop-progress-top) - var(--control-walk-bottom, var(--desktop-walking-bottom)))); }
+}
+/* Portrait disclosures must not leave covered scene actions focusable. */
+@media (max-width: 700px) and (orientation: portrait) {
+  #app { --portrait-walk-reserve: min(28dvh, 12rem); --portrait-panel-height: max(var(--ui-control-size), calc(100dvh - 4.125rem - var(--safe-top) - var(--walking-bottom) - var(--portrait-walk-reserve) - var(--ui-gap))); }
+  body:not([data-interior="true"]) #experience-settings[open],
+  body:not([data-interior="true"]) #tour-progress[open] { max-height: var(--portrait-panel-height); overflow-y: auto; }
+  body:not([data-interior="true"]) #app:has(#experience-settings[open]) #tour-progress { visibility: hidden; pointer-events: none; }
+  body:not([data-interior="true"]) #app:has(#experience-settings[open], #tour-progress[open]) #interior-entry,
+  body:not([data-interior="true"]) #app:has(#experience-settings[open], #tour-progress[open]) #interact { visibility: hidden; pointer-events: none; }
+}
