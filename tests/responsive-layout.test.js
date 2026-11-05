@@ -162,3 +162,18 @@ test('compact HUD, gallery, run control and reduced-motion behavior are preserve
   assert.match(css, /animation:\s*none\s*!important/);
   assert.match(fluid, /#joystick-knob\s*\{[^}]*left:\s*calc\(\(100% - var\(--ui-knob-size\)\) \/ 2\)/);
 });
+
+test('desktop movement controls clear the footer-offset dock, including enlarged text', () => {
+  for (const [width, height] of [[1200, 830], [1024, 768], [1440, 900], [1920, 1080]]) {
+    for (const root of [16, 20, 32]) {
+      const ctx = context(width, height, root, { bottom: 16 });
+      const dockTop = token('--ui-footer-space', ctx) + 16 + token('--desktop-toolbar-height', ctx);
+      const movementBottom = token('--desktop-walking-bottom', ctx);
+      assert.ok(movementBottom - dockTop >= root, `${width}×${height}/${root}: movement overlaps dock`);
+      // The joystick label protrudes below its ring by at most 19 CSS pixels.
+      assert.ok(movementBottom + 1.5 * root - 19 > dockTop);
+    }
+  }
+  assert.match(fluid, /\.toolbar\s*\{\s*height:\s*var\(--desktop-toolbar-height\)/);
+  assert.match(fluid, /\.walk-mode\s*\{\s*bottom:\s*var\(--desktop-walking-bottom\)/);
+});

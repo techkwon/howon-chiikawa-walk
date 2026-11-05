@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {installControlLayout} from './control-layout.js';
 import {createAudioFX} from './audio-fx.js';
 import {koreanClock,resolveEnvironment,SEASON_COLORS,PHASES} from './environment.js';
 import {followPose,zoomFollowDistance,steerHeading,clampFieldOfView,defaultFieldOfView} from './camera-follow.js';
@@ -20,6 +21,7 @@ import {removeApartmentBackdrop,createEntrance,atEntrance} from './entrance.js';
 import {interiorCameraPose,constrainInteriorCamera} from './interior-camera.js';
 import './style.css';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+installControlLayout();
 function makeElement(tag,text,props={}){const node=document.createElement(tag);node.textContent=text;Object.assign(node,props);return node;}function labelButton(selector,icon,text){$(selector).replaceChildren(document.createTextNode(icon+' '),makeElement('span',text));}
 const audio=createAudioFX();audio.setVolume(.35);let reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches,visualIntensity=reducedMotion?'low':'normal',uiPhase='loading',galleryActive=false,gallerySnapshot=null,galleryIndex=0;
 function sceneAccess(phase){uiPhase=phase;for(const child of $('#app').children)child.inert=phase==='game'?false:phase==='welcome'?child.id!=='welcome':child.id!=='loading';}

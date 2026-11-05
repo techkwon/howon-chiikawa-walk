@@ -358,6 +358,23 @@ test('mobile joystick handles drag, dead zone, release and pointer cancellation'
   controller.destroy();
 });
 
+test('joystick long press suppresses its menu without interrupting movement and cancellation stops it', () => {
+  const { win, doc, element, controller, fire } = inputFixture();
+  fire(element, 'pointerdown', { pointerId: 4, pointerType: 'touch', clientX: 60, clientY: 20, button: 0 });
+  assert.equal(controller.getVector().z, -1);
+  assert.equal(fire(element, 'contextmenu').defaultPrevented, true);
+  assert.equal(controller.getVector().z, -1);
+  assert.equal(fire(doc, 'contextmenu').defaultPrevented, false);
+  fire(win, 'pointercancel', { pointerId: 4 });
+  assert.deepEqual(controller.getVector(), { x: 0, z: 0 });
+  assert.equal(element.hasPointerCapture(4), false);
+  fire(element, 'pointerdown', { pointerId: 5, clientX: 60, clientY: 20, button: 0 });
+  element.dispatchEvent(new Event('contextmenu', { cancelable: false }));
+  assert.deepEqual(controller.getVector(), { x: 0, z: 0 });
+  controller.destroy();
+  assert.equal(fire(element, 'contextmenu').defaultPrevented, false);
+});
+
 test('blur, focus changes and lost capture clear input and destroy removes listeners', () => {
   const { win, doc, element, knob, controller, fire } = inputFixture();
   fire(win, 'keydown', { code: 'KeyW' }); fire(win, 'blur');

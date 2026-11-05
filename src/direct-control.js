@@ -264,6 +264,12 @@ export function createInputController({ element } = {}) {
   listen(win, 'blur', reset);
   listen(doc, 'visibilitychange', () => { if (doc.hidden) reset(); });
   listen(doc, 'focusin', event => { if (blocked(event.target)) reset(); });
+  // Holding the joystick is movement, not a request for the browser's touch menu.
+  // Scope this to the joystick so links and other page content retain their menus.
+  listen(element, 'contextmenu', event => {
+    event.preventDefault();
+    if (!event.defaultPrevented) reset();
+  });
   listen(element, 'pointerdown', event => {
     // A touch on the run button can be the primary pointer. The first pointer
     // that actually reaches this joystick owns it, even if it is non-primary.

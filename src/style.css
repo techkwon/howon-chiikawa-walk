@@ -791,6 +791,13 @@ footer button:focus-visible, footer a:focus-visible { outline-offset: -3px; }
 #travel-help button { min-height: var(--ui-control-size); min-width: 44px; padding: .625rem; margin: .25rem; border-radius: .625rem; background: #e8efdf; font-size: var(--ui-font-body); }
 #travel-help #travel-jump { background: #3c654d; color: #fffdf5; }
 body[data-gallery="true"] #travel-help { display: none !important; }
+/* Share the desktop dock's occupied height with the movement controls. */
+@media (min-width: 701px) and (min-height: 501px) {
+  #app { --desktop-toolbar-height: max(80px, 5rem); --desktop-walking-bottom: calc(var(--ui-footer-space) + var(--safe-bottom) + var(--desktop-toolbar-height) + 1rem); }
+  .toolbar { height: var(--desktop-toolbar-height); }
+  .walk-mode { bottom: var(--desktop-walking-bottom); }
+  #joystick { bottom: calc(var(--desktop-walking-bottom) + 1.5rem); }
+}
 @media (max-width: 700px) {
   #app { --toolbar-height: max(112px, 7rem); --toolbar-bottom: calc(var(--ui-footer-space) + var(--safe-bottom)); }
   .toolbar { width: auto; height: var(--toolbar-height); grid-template-columns: repeat(3, minmax(44px, 1fr)); grid-template-rows: repeat(2, minmax(var(--ui-control-size), max-content)); max-height: 45dvh; }
@@ -923,3 +930,15 @@ body[data-interior="true"] #experience-settings[open] { max-height: calc(100dvh 
  body[data-interior="true"] footer { display: none; }
 }
 body[data-interior="true"] #app:has(#experience-settings[open]) #toast { visibility: hidden; pointer-events: none; }
+/* Measured lanes include variable-height labels and omit hidden actions. */
+#joystick { -webkit-touch-callout: none; }
+@media (min-width: 701px) and (min-height: 501px) {
+  .walk-mode { bottom: var(--control-walk-bottom, var(--desktop-walking-bottom)); }
+  #joystick { bottom: calc(var(--control-walk-bottom, var(--desktop-walking-bottom)) + 1.5rem); }
+  #interact { bottom: var(--control-interact-bottom, 264px); }
+  .view-label { bottom: var(--control-caption-bottom, 324px); }
+  #toast { bottom: var(--control-toast-bottom, 380px); }
+}
+@media (min-width: 901px) and (min-height: 501px) {
+  body[data-interior="true"] #toast { bottom: var(--control-toast-bottom, 380px); }
+}
