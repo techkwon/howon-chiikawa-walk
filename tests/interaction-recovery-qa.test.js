@@ -24,5 +24,5 @@ test('indoor camera remains automatic after a drag',()=>{
  const h=pointerHarness();h.context.interiorActive=true;h.fire('pointerdown');h.fire('pointermove',{clientX:30});assert.equal(h.context.follow,true);
 });
 test('keep waiting restarts the recovery timer for the same destination',()=>{
- let handler,requested=null;const context={$:()=>({set onclick(fn){handler=fn;}}),travelRequest:{index:3,startedAt:10},armTravelHelp:index=>requested=index};vm.createContext(context);const handlerSource=source.match(/\$\('#travel-wait'\)\.onclick=([^\n]*?);(?=\n|$)/)?.[0];assert.ok(handlerSource);vm.runInContext(handlerSource,context);handler();assert.equal(requested,3);context.travelRequest=null;requested=null;handler();assert.equal(requested,null);
+ let handler,requested=null,focused=false;const context={canvas:{focus(){focused=true;}},...{$:()=>({set onclick(fn){handler=fn;}}),travelRequest:{index:3,startedAt:10},armTravelHelp:index=>requested=index}};vm.createContext(context);const handlerSource=source.match(/\$\('#travel-wait'\)\.onclick=([^\n]*?);(?=\n|$)/)?.[0];assert.ok(handlerSource);vm.runInContext(handlerSource,context);handler();assert.equal(requested,3);assert.equal(focused,true);context.travelRequest=null;requested=null;handler();assert.equal(requested,null);
 });

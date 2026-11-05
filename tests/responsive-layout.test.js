@@ -224,6 +224,6 @@ test('portrait disclosures reserve walking space and suppress covered scene acti
     const panelHeight = Math.max(token('--ui-control-size', ctx), height - 4.125 * 16 - walkingBottom - token('--portrait-walk-reserve', ctx) - token('--ui-gap', ctx));
     assert.ok(4.125 * 16 + panelHeight + token('--ui-gap', ctx) <= height - walkingBottom - token('--portrait-walk-reserve', ctx) + .001);
   }
-  for (const id of ['interior-entry', 'interact']) assert.ok(css.includes(`#app:has(#experience-settings[open], #tour-progress[open]) #${id}`));
-  assert.ok(css.includes('#app:has(#experience-settings[open]) #tour-progress { visibility: hidden; pointer-events: none; }'));
+  for (const id of ['interior-entry', 'interact']) assert.ok(css.includes(`#app:has(> #experience-settings[open], > #tour-progress[open]) #${id}`));
+  assert.ok(css.includes('#app:has(> #experience-settings[open]) #tour-progress { visibility: hidden; pointer-events: none; }'));
 });

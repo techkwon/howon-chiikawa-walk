@@ -47,6 +47,7 @@ test('normal welcome approach is still travelling after 15 seconds, not necessar
     h.tick(300);
     assert.equal(h.context.tour.visitedIds.includes('welcome'), false);
     assert.ok(h.actors[selected].model.position.distanceTo(before) > 10);
+    assert.equal(h.$('#travel-help').hidden,true);
   }
 });
 
@@ -65,7 +66,7 @@ test('fault-injected off-graph canopy edge really stalls before optional recover
 });
 
 for (const [selected, kind] of ['chiikawa', 'hachiware', 'usagi'].entries()) {
-  test(`${kind}: blocked route → 15-second safe jump → explanation → all eight actual minigames → farewell`, () => {
+  test(`${kind}: blocked route → stalled-progress safe jump → explanation → all eight actual minigames → farewell`, () => {
     const h = createHarness(stages, selected), c = h.context;
     h.start(kind);
     for (const [index, story] of SCHOOL_STORIES.entries()) {
@@ -73,7 +74,7 @@ for (const [selected, kind] of ['chiikawa', 'hachiware', 'usagi'].entries()) {
       actor.model.position.set(-2.79, .25, -20);
       actor.recovery = []; actor.manualTrail = [];
       c.navigateStop(index);
-      h.tick(301);
+      for(let wait=0;h.$('#travel-help').hidden&&wait<1000;wait++)h.tick();
       assert.equal(h.$('#travel-help').hidden, false, `${kind}/${story.id}`);
       assert.equal(h.$('#stop-quiz-dialog').open, false);
       const before = actor.model.position.clone();
@@ -97,7 +98,7 @@ for (const [selected, kind] of ['chiikawa', 'hachiware', 'usagi'].entries()) {
   });
 }
 
-test('15-second assistance excludes paused time and direct walking does not complete a game', () => {
+test('stalled-progress assistance excludes paused time and direct walking does not complete a game', () => {
   const h = createHarness(stages), c = h.context;
   h.start();
   h.actors[0].model.position.set(-2.79, .25, -20);
@@ -107,7 +108,7 @@ test('15-second assistance excludes paused time and direct walking does not comp
   h.tick(600);
   assert.equal(h.$('#travel-help').hidden, true);
   h.$('#play').click();
-  h.tick(301);
+  for(let wait=0;h.$('#travel-help').hidden&&wait<1000;wait++)h.tick();
   assert.equal(h.$('#travel-help').hidden, false);
   h.$('#travel-manual').click();
   assert.equal(c.manual, true);
@@ -126,7 +127,8 @@ test('15-second assistance excludes paused time and direct walking does not comp
 test('keep waiting dismisses assistance without movement or game progress', () => {
   const h = createHarness(stages), c = h.context;
   h.start();
-  h.tick(301);
+  h.actors[0].path=[];h.actors[0].target=null;h.actors[0].recovery=[];
+  for(let wait=0;h.$('#travel-help').hidden&&wait<1000;wait++)h.tick();
   assert.equal(h.$('#travel-help').hidden, false);
   const before = h.actors[0].model.position.clone();
   h.$('#travel-wait').click();

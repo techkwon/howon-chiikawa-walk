@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import * as THREE from 'three';
+import * as travelProgress from '../../src/travel-progress.js';
 import * as navigation from '../../src/navigation.js';
 import * as movement from '../../src/direct-control.js';
 import * as cameraFollow from '../../src/camera-follow.js';
@@ -93,7 +94,7 @@ export function createHarness(stageModule, selected = 0) {
   const input = movement.createInputController({ element: $('#joystick') });
   const playedSounds = [];
   const context = vm.createContext({interiorActive:false,reducedMotion:false,
-    THREE, ...navigation, ...movement, ...cameraFollow, ...arrivals, ...tours, ...guides, ...coinModule, ...stageModule,
+    THREE, ...travelProgress, ...navigation, ...movement, ...cameraFollow, ...arrivals, ...tours, ...guides, ...coinModule, ...stageModule,
     SCHOOL_STORIES, actors, $, $$, document, window, input,
     loaded: true, started: false, paused: true, manual: false, selected, follow: true, speed: 1, time: 0,
     galleryActive: false, uiPhase: 'welcome', destination: 'field', nextStopAt: null,
@@ -105,7 +106,7 @@ export function createHarness(stageModule, selected = 0) {
     animateCharacter() {}, fx() {}, showSpeech() {}, labelButton() {},
     camera: { position: new THREE.Vector3(), clone() { return this; } },
     controls: { target: new THREE.Vector3(), enablePan: false }, transition: null,
-    canvas: { focus() { document.activeElement = null; } }, setTimeout(fn) { fn(); },
+    canvas: $('#scene'), setTimeout(fn) { fn(); },
     speechUntil: null, speechActive: false, speechVisible: false, speechBubble: $('#character-speech'),
     toast(message) { context.lastToast = message; },
     sceneAccess(phase) { context.uiPhase = phase; }, makeElement: (tag, text, props = {}) => Object.assign(element(tag), { textContent: text }, props),
@@ -134,8 +135,8 @@ export function arrive(h, index, { rescue = false } = {}) {
   if (rescue) {
     const actor = h.actors[c.selected];
     actor.model.position.set(-2.79, .25, -20); actor.recovery = []; actor.manualTrail = [];
-    c.navigateStop(index); h.tick(301);
-    assert.equal(h.$('#travel-help').hidden, false, `${story.id}: 15-second assistance appears`);
+    c.navigateStop(index); let frames=0;while(h.$('#travel-help').hidden&&frames++<1000)h.tick();
+    assert.equal(h.$('#travel-help').hidden, false, `${story.id}: stalled-route assistance appears`);
     h.$('#travel-jump').click();
   } else {
     if (h.read('activeGoalId') !== story.id) c.navigateStop(index);

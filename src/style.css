@@ -915,7 +915,7 @@ body[data-interior="true"] #experience-settings[open] { max-height: calc(100dvh 
  body[data-interior="true"] .walk-mode { position: fixed; top: auto; bottom: calc(84px + var(--safe-bottom)); left: auto; right: 12px; width: auto; max-width: calc(100vw - 132px); transform: none; display: flex; flex-direction: row; flex-wrap: nowrap; max-height: 56px; padding: 4px; }
  body[data-interior="true"] #interact { top: auto; bottom: calc(148px + var(--safe-bottom)); right: 12px; left: auto; transform: none; max-width: calc(100vw - 132px); white-space: normal; }
  body[data-interior="true"] #experience-settings[open] { top: 64px; left: 12px; right: 12px; bottom: auto; width: auto; max-height: calc(100dvh - 280px); overflow-y: auto; z-index: 40; }
- body[data-interior="true"] #app:has(#experience-settings[open]) .walk-mode, body[data-interior="true"] #app:has(#experience-settings[open]) #interact { visibility: hidden; pointer-events: none; }
+ body[data-interior="true"] #app:has(> #experience-settings[open]) .walk-mode, body[data-interior="true"] #app:has(> #experience-settings[open]) #interact { visibility: hidden; pointer-events: none; }
  body[data-interior="true"] #interior-leave { top: 142px; }
 }
 @media(max-width:900px) and (max-height:500px) {
@@ -929,7 +929,7 @@ body[data-interior="true"] #experience-settings[open] { max-height: calc(100dvh 
  /* Exterior footer remains available after exit; it must not intercept play controls indoors. */
  body[data-interior="true"] footer { display: none; }
 }
-body[data-interior="true"] #app:has(#experience-settings[open]) #toast { visibility: hidden; pointer-events: none; }
+body[data-interior="true"] #app:has(> #experience-settings[open]) #toast { visibility: hidden; pointer-events: none; }
 /* Measured lanes include variable-height labels and omit hidden actions. */
 #joystick { -webkit-touch-callout: none; }
 @media (min-width: 701px) and (min-height: 501px) {
@@ -958,7 +958,7 @@ body[data-interior="true"] #app:has(#experience-settings[open]) #toast { visibil
   body[data-compact="true"]:not([data-interior="true"]):not([data-gallery="true"]) #experience-settings[open],
   body[data-compact="true"]:not([data-interior="true"]):not([data-gallery="true"]) #tour-progress[open] { max-height: var(--short-panel-height); z-index: 40; }
   body[data-compact="true"]:not([data-interior="true"]):not([data-gallery="true"]) .walk-mode { max-height: var(--short-walk-height); }
-  body[data-compact="true"]:not([data-interior="true"]):not([data-gallery="true"]) #app:has(#experience-settings[open], #tour-progress[open]) #interact { visibility: hidden; pointer-events: none; }
+  body[data-compact="true"]:not([data-interior="true"]):not([data-gallery="true"]) #app:has(> #experience-settings[open], > #tour-progress[open]) #interact { visibility: hidden; pointer-events: none; }
 }
 /* Reading owns the foreground; closing the story restores the utility panels. */
 #app:has(#story-card:not([hidden])) #experience-settings,
@@ -976,9 +976,9 @@ body[data-interior="true"] #app:has(#experience-settings[open]) #toast { visibil
   #app { --portrait-walk-reserve: min(28dvh, 12rem); --portrait-panel-height: max(var(--ui-control-size), calc(100dvh - 4.125rem - var(--safe-top) - var(--walking-bottom) - var(--portrait-walk-reserve) - var(--ui-gap))); }
   body:not([data-interior="true"]) #experience-settings[open],
   body:not([data-interior="true"]) #tour-progress[open] { max-height: var(--portrait-panel-height); overflow-y: auto; }
-  body:not([data-interior="true"]) #app:has(#experience-settings[open]) #tour-progress { visibility: hidden; pointer-events: none; }
-  body:not([data-interior="true"]) #app:has(#experience-settings[open], #tour-progress[open]) #interior-entry,
-  body:not([data-interior="true"]) #app:has(#experience-settings[open], #tour-progress[open]) #interact { visibility: hidden; pointer-events: none; }
+  body:not([data-interior="true"]) #app:has(> #experience-settings[open]) #tour-progress { visibility: hidden; pointer-events: none; }
+  body:not([data-interior="true"]) #app:has(> #experience-settings[open], > #tour-progress[open]) #interior-entry,
+  body:not([data-interior="true"]) #app:has(> #experience-settings[open], > #tour-progress[open]) #interact { visibility: hidden; pointer-events: none; }
 }
 
 /* Small-screen full menus use document flow instead of overlapping rails. */
@@ -999,7 +999,7 @@ body[data-interior="true"] #app:has(#experience-settings[open]) #toast { visibil
 }
 @media (max-width: 700px) and (orientation: portrait) {
  body[data-compact="true"]:not([data-interior="true"]) #experience-settings[open] { max-height: max(8rem,calc(100dvh - 4.125rem - var(--safe-top) - var(--walking-bottom) - var(--ui-gap))); }
- body:not([data-interior="true"]) #app:has(#experience-settings[open]) :is(.walk-mode,#joystick,.places,.companions) { visibility: hidden; pointer-events: none; }
+ body:not([data-interior="true"]) #app:has(> #experience-settings[open]) :is(.walk-mode,#joystick,.places,.companions) { visibility: hidden; pointer-events: none; }
 }
 @media (min-width: 701px) and (min-height: 501px) {
  body[data-compact="false"]:not([data-interior="true"]) .intro { top: 200px; }
@@ -1035,3 +1035,72 @@ footer { color: #445640; background: #fffdf6; border-radius: 12px; padding: 6px 
  body[data-compact="true"]:not([data-interior="true"]) .joystick-label { display: none; }
 }
 #graphics-reload { min-height: var(--ui-control-size); padding: .75rem 1rem; border-radius: .75rem; background: #3c654d; color: #fffdf6; }
+
+/* Focused play HUD: secondary controls live in one scrollable native dialog. */
+body[data-compact="true"] #app > :is(.intro,.view-label,footer,#interact,#interior-leave) { display:none !important; }
+body[data-compact="true"] .topbar .brand,body[data-compact="true"] .topbar .live { display:none; }
+body[data-compact="true"] #hotspots .hotspot:not(.next-goal) { display:none; }
+#game-goal { position:absolute;top:calc(16px + var(--safe-top));left:calc(16px + var(--safe-left));width:min(380px,calc(100% - 112px));padding:14px 18px;z-index:12;pointer-events:none; }
+#game-goal small,#game-goal strong,#game-goal span { display:block; }
+#game-goal small { color:#52634f;font-size:.75rem;margin-bottom:4px; }
+#game-goal strong { font-size:1rem;line-height:1.4; }
+#game-goal span { color:#52634f;font-size:.8125rem;margin-top:5px;line-height:1.5; }
+#goal-action { position:absolute;right:calc(20px + var(--safe-right));bottom:calc(28px + var(--safe-bottom));z-index:20;min-height:52px;padding:14px 24px;background:#315e47;color:#fffdf6;font-weight:700;max-width:48%; }
+body[data-compact="true"] #app > .walk-mode { left:50%;right:auto;bottom:calc(28px + var(--safe-bottom));transform:translateX(-50%);width:auto;max-width:40%; }
+#game-menu { width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);padding:20px; }
+.menu-heading { display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px; }
+.menu-heading h2 { font-size:1.25rem;margin:0; }
+#menu-close { min-height:44px;padding:10px 14px;background:#315e47;color:#fffdf6;border-radius:12px; }
+#menu-content { display:grid;gap:14px; }
+body #app #game-menu #menu-content .menu-section { position:static !important;inset:auto !important;transform:none !important;width:100% !important;max-width:none !important;max-height:none !important;height:auto !important;visibility:visible !important;opacity:1 !important;display:block !important;overflow:visible !important;margin:0; }
+body #app #game-menu #menu-content .menu-section[hidden] { display:none !important; }
+body #app #game-menu .toolbar { display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px; }
+#game-menu .toolbar .divider { display:none; }
+body #app #game-menu .toolbar button { min-width:0;width:100%;min-height:48px;display:flex;justify-content:center;gap:8px; }
+#game-menu :is(.friend,.place) { min-height:48px; }
+#game-menu #experience-settings:not([open]) > :not(summary) { display:none; }
+#game-menu #experience-settings[open] { display:grid !important;grid-template-columns:1fr 1fr;gap:10px; }
+#game-menu #experience-settings summary,#game-menu #experience-settings small { grid-column:1/-1; }
+#game-menu #credits { font-size:.75rem;line-height:1.6;color:#52634f;text-align:left; }
+#game-menu #help { border-radius:12px;min-height:44px; }
+#game-menu #help::after { content:' 이용 안내'; }
+body[data-compact="true"] #app:has(#game-menu[open]) :is(.walk-mode,#joystick) { visibility:hidden; }
+@media(max-width:700px) {
+ #game-goal { top:calc(12px + var(--safe-top));left:12px;padding:12px;width:calc(100% - 100px); }
+ #game-goal strong { font-size:.9375rem; }
+ #game-goal span { font-size:.75rem; }
+ #goal-action { right:12px;bottom:calc(24px + var(--safe-bottom));padding:12px 16px;max-width:48%; }
+ body[data-compact="true"] #app > .walk-mode { bottom:calc(88px + var(--safe-bottom));left:auto;right:12px;transform:none;max-width:48%; }
+ body[data-compact="true"] #app > #joystick { left:20px;bottom:calc(28px + var(--safe-bottom));top:auto;width:100px;height:100px; }
+ #game-menu { padding:16px; }
+}
+@media(max-height:500px) and (orientation:landscape) {
+ #game-goal { padding:8px 12px;max-width:320px; }
+ #game-goal span { display:none; }
+ body[data-compact="true"] #app > .walk-mode { bottom:84px;right:12px;left:auto;transform:none; }
+}
+
+body[data-compact="true"] #toast { bottom:calc(150px + var(--safe-bottom)); }
+body[data-compact="true"] .topbar { justify-content:flex-end; }
+body[data-compact="true"] #hud-toggle { min-width:64px;min-height:44px;background:#fffdf6;color:#315e47;box-shadow:0 3px 16px #263c2520; }
+
+body #app #game-menu #menu-content .toolbar.menu-section { display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr)); }
+body #app #game-menu #menu-content #experience-settings[open] { display:grid !important; }
+.menu-group { border:1px solid #dce3d5;border-radius:16px;padding:12px; }
+.menu-group > summary { min-height:44px;display:list-item;align-content:center;cursor:pointer;font-weight:700; }
+body #app #game-menu #menu-content .menu-group:not([open]) .menu-section { display:none !important; }
+/* Pause/resume is the contextual HUD action, so it is not duplicated in the menu. */
+body #app #game-menu #menu-content .toolbar #play { display:none !important; }
+
+body:not([data-chat="true"]) #character-speech { display:none !important; }
+#hud-chat { min-height:44px;padding:10px 14px;margin-bottom:14px;border:1px solid #dce3d5;border-radius:12px; }
+#story-more { margin:12px 0; }
+#story-more summary { min-height:44px;align-content:center;cursor:pointer;color:#52634f; }
+#game-menu .menu-heading { position:sticky;top:-20px;z-index:3;background:#fffdf6;padding:8px 0; }
+@media(max-width:700px) {
+ body #app #game-menu #menu-content #experience-settings[open] { grid-template-columns:minmax(0,1fr); }
+ #game-menu #experience-settings > :is(button,label) { width:100%;max-width:none; }
+ #game-menu .menu-heading { top:-16px; }
+}
+#story-card #story-read { width:100%;min-height:48px;background:#315e47;color:#fffdf6;font-weight:700;border-radius:12px;margin:8px 0; }
+#story-card .story-actions button { background:#edf1e6;color:#315e47; }

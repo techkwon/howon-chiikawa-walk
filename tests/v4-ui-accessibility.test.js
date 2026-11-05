@@ -37,9 +37,8 @@ test('speed and quality remain available once each in settings rather than disap
   assert.match(v4, /#experience-settings #speed, #experience-settings #quality\s*\{\s*min-height:\s*var\(--ui-control-size\)/);
 });
 
-test('all screen sizes start in compact mode without hiding the core toolbar', () => {
-  assert.match(main, /let\s+compactHUD\s*=\s*true\s*;/);
-  assert.match(main, /document\.body\.dataset\.compact\s*=\s*String\(compactHUD\)/);
+test('all screen sizes start in compact mode and retain core controls', () => {
+  assert.match(main, /document\.body\.dataset\.compact='true'/);
   assert.match(html, /id="hud-toggle"/);
   ast.walkRules(rule => {
     if (!rule.selector.includes('body[data-compact="true"]')) return;
