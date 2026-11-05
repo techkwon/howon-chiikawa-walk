@@ -1,4 +1,4 @@
-import { BUILDINGS, TREES } from './navigation.js';
+import { BUILDINGS, TREES, NODES, lanePoint } from './navigation.js';
 
 export const CHARACTER_RADIUS = 0.46;
 export const MAX_MOVE_DT = 0.05;
@@ -174,6 +174,20 @@ export function safeMove(position, vector, dt, speed, obstacles = [], world = nu
     d.z -= intoWall * hit.normal.z;
   }
   return clampPosition(p, movementLimits);
+}
+
+// Rejoin the authored route only along a collision-clear segment in this lane.
+export function nearestReachableNode(position, lane = 0) {
+  const candidates = Object.keys(NODES).map(node => {
+    const [x, z] = lanePoint(node, lane);
+    return { node, x, z, distance: Math.hypot(x - position.x, z - position.z) };
+  }).sort((a, b) => a.distance - b.distance);
+  for (const p of candidates) {
+    if (p.distance < .01) return p.node;
+    const end = safeMove(position, { x: (p.x - position.x) / p.distance, z: (p.z - position.z) / p.distance }, .05, p.distance / .05);
+    if (Math.hypot(end.x - p.x, end.z - p.z) < .01) return p.node;
+  }
+  return null; // Existing travel assistance handles positions with no visible node.
 }
 
 const KEY_VECTORS = {
