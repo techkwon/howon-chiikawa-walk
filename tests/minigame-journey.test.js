@@ -145,6 +145,7 @@ test('restart clears all attempt/visit/stamp state and requires a fresh guide an
   const oldButton = clickOption(h, STAGE_PATHS.together[0]);
   h.$('#stop-quiz-close').click();
   h.$('#tour-restart').click();
+  h.$('#restart-yes').click();
   assert.equal(c.started, false);
   assert.equal(c.paused, true);
   assert.equal(h.$('#welcome').hidden, false);

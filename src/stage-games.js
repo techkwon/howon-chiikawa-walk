@@ -12,8 +12,8 @@ const definitions = [
     fictionNote: '카드 조립은 이 산책을 위해 만든 학습 게임이에요.', sourceIndex: 0,
     slots: [
       { label: '학교가 있는 도시', answer: 'uijeongbu', choices: [{ value: 'seoul', label: '서울특별시' }, { value: 'uijeongbu', label: '의정부시' }, { value: 'suwon', label: '수원시' }], hint: '학교 이야기의 주소는 의정부시 호암로 205예요.' },
-      { label: '학교의 설립 구분', answer: 'public', choices: [{ value: 'private', label: '사립' }, { value: 'national', label: '국립' }, { value: 'public', label: '공립' }], hint: '학교알리미에는 공립 중학교로 안내되어 있어요.' },
-      { label: '학교알리미의 설립일', answer: '2000', choices: [{ value: '2010', label: '2010년 3월 1일' }, { value: '2000', label: '2000년 3월 1일' }, { value: '1990', label: '1990년 3월 1일' }], hint: '학교 이야기에서 본 설립일은 2000년 3월 1일이에요.' },
+      { label: '누가 학교를 세웠을까요? (설립 구분)', answer: 'public', choices: [{ value: 'private', label: '사립 · 개인이나 단체가 세운 학교' }, { value: 'national', label: '국립 · 나라가 세운 학교' }, { value: 'public', label: '공립 · 지역에서 세운 학교' }], hint: '학교알리미에는 공립 중학교로 안내되어 있어요.' },
+      { label: '학교가 생긴 날 (설립일)', answer: '2000', choices: [{ value: '2010', label: '2010년 3월 1일' }, { value: '2000', label: '2000년 3월 1일' }, { value: '1990', label: '1990년 3월 1일' }], hint: '학교 이야기에서 본 설립일은 2000년 3월 1일이에요.' },
     ],
     success: '소개 카드 완성! 의정부시의 공립 중학교, 2000년 3월 1일 설립이라는 공개 정보를 연결했어요.',
   },
@@ -88,7 +88,7 @@ const definitions = [
   {
     id: 'care', type: 'route', title: '도움으로 이어지는 길',
     instructions: '가상의 친구가 혼자 고민을 안고 있지 않도록 다음 길을 골라요. 실제 지도나 상담 예약 화면은 아니에요.',
-    fictionNote: '도움 경로는 가상 장면이에요. 실제 상담 시간·예약·위치·비밀보장 범위를 약속하지 않아요.', sourceIndex: 0,
+    fictionNote: '도움 경로는 가상 장면이에요. 실제 상담 시간이나 장소를 알려 주거나 예약해 주는 게임은 아니에요. 이야기한 내용을 어디까지 비밀로 지킬지는 상담 선생님께 물어보세요.', sourceIndex: 0,
     nodes: {
       start: { label: '고민을 혼자 안고 있는 친구', prompt: '가상의 친구가 고민을 혼자 안고 있어요. 어떤 길로 갈까요?', choices: [{ value: 'trusted', label: '믿을 만한 어른에게 말 꺼내기', next: 'share' }, { value: 'alone', label: '누구에게도 말하지 않고 혼자 버티기', hint: '이 게임의 목적은 도움으로 연결되는 길을 찾는 거예요. 함께할 사람을 떠올려 볼까요?' }] },
       share: { label: '도움 요청하기', prompt: '말을 꺼냈어요. 내 마음을 전하는 다음 발판을 골라요.', choices: [{ value: 'request', label: '필요한 도움을 함께 이야기하기', next: 'choose' }, { value: 'guess', label: '상대가 모두 알아맞히길 기다리기', hint: '모든 것을 설명할 필요는 없어요. 필요한 도움을 함께 이야기하는 길을 골라 볼까요?' }] },

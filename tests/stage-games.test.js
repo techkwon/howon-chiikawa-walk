@@ -252,7 +252,8 @@ test('care route exposes two valid branches and does not request personal worrie
     assert.equal(state.stages.care.node, 'finish');
     assert.match(getStageView(state, 'care').boardLabel, /실제 지도 아님/);
   }
-  assert.match(STAGE_GAMES.care.fictionNote, /시간·예약·위치·비밀보장 범위를 약속하지/);
+  assert.match(STAGE_GAMES.care.fictionNote, /실제 상담 시간이나 장소를 알려 주거나 예약해 주는 게임은 아니/);
+  assert.match(STAGE_GAMES.care.fictionNote, /어디까지 비밀로 지킬지는 상담 선생님께 물어/);
   assert.equal('form' in STAGE_GAMES.care, false);
 });
 
