@@ -177,3 +177,27 @@ test('desktop movement controls clear the footer-offset dock, including enlarged
   assert.match(fluid, /\.toolbar\s*\{\s*height:\s*var\(--desktop-toolbar-height\)/);
   assert.match(fluid, /\.walk-mode\s*\{\s*bottom:\s*var\(--desktop-walking-bottom\)/);
 });
+
+test('short landscape utility columns share available width without overlapping', () => {
+  for (const [width, height] of [[600, 415], [568, 320], [844, 390]]) {
+    for (const root of [16, 20, 32]) {
+      const ctx = context(width, height, root, { left: 12, right: 12 });
+      const column = token('--short-utility-width', ctx), gap = token('--ui-gap', ctx);
+      assert.ok(column >= 44);
+      assert.ok(Math.abs(column * 3 + gap * 2 - token('--ui-available-width', ctx)) < .001);
+      assert.ok(token('--short-utility-top', ctx) >= 4 * root);
+      assert.equal(token('--short-interaction-top', ctx), token('--short-utility-top', ctx) + 5 * root + gap);
+    }
+  }
+  const info = html.slice(html.indexOf('<dialog id="info"'));
+  for (const notice of ['개인 비상업 팬 데모', '공개 개발·테스트용', '공식 서비스가 아니며']) assert.ok(info.includes(notice));
+});
+
+test('expanded short-landscape settings and progress reserve the full walking-control lane', () => {
+  for (const [width, height] of [[600, 415], [568, 320], [844, 390]]) {
+    const ctx = context(width, height);
+    const panelBottom = token('--short-utility-top', ctx) + token('--short-panel-height', ctx);
+    const walkTop = height - token('--friends-bottom', ctx) - token('--short-walk-height', ctx);
+    assert.ok(panelBottom + token('--ui-gap', ctx) <= walkTop + .001, `${width}×${height}: expanded panel overlaps walking lane`);
+  }
+});
